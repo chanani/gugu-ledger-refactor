@@ -1,0 +1,9 @@
+.idea/
+.gradle/
+build/
+target/
+logs/
+
+src/main/resources/application-dev.yml
+src/main/resources/application-chan.yml
+src/main/resources/application-local.yml
