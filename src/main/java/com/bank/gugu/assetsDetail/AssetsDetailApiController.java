@@ -1,5 +1,6 @@
 package com.bank.gugu.assetsDetail;
 
+import com.bank.gugu.assetsDetail.input.AssetsDetailsInput;
 import com.bank.gugu.assetsDetail.service.AssetsDetailService;
 import com.bank.gugu.assetsDetail.service.request.AssetsDetailCreateRequest;
 import com.bank.gugu.assetsDetail.service.request.AssetsDetailUpdateRequest;
@@ -31,13 +32,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Assets Detail API Controller", description = "자산 상세 정보 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class AssetsDetailApiController {
+public class AssetsDetailApiController implements AssetsDetailControllerDocs{
 
     private final AssetsDetailService assetsDetailService;
 
-    @Operation(summary = "자산 상세내역 생성 API",
-            description = "자산 상세내역을 생성합니다.")
     @PostMapping("/api/v1/user/assets-detail")
+    @Override
     public ResponseEntity<ApiResponse> addAssetsDetail(
             @Valid @RequestBody AssetsDetailCreateRequest request,
             @AuthUser User user
@@ -46,9 +46,8 @@ public class AssetsDetailApiController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "자산 상세내역 수정 API",
-            description = "자산 상세내역을 수정합니다.")
     @PutMapping("/api/v1/user/assets-detail/{assetsDetailId}")
+    @Override
     public ResponseEntity<ApiResponse> updateAssetsDetail(
             @PathVariable(name = "assetsDetailId") Long assetsDetailId,
             @Valid @RequestBody AssetsDetailUpdateRequest request,
@@ -58,21 +57,15 @@ public class AssetsDetailApiController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "자산 상세내역 삭제 API",
-            description = "자산 상세내역을 삭제합니다.")
     @DeleteMapping("/api/v1/user/assets-detail/{assetsDetailId}")
+    @Override
     public ResponseEntity<ApiResponse> deleteAssetsDetail(@PathVariable(name = "assetsDetailId") Long assetsDetailId) {
         assetsDetailService.deleteAssetsDetail(assetsDetailId);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "자산 상세내역 목록 조회 API",
-            description = """
-                    자산 상세내역 목록을 조회합니다.
-                    무한스크롤로 제작되었으며, 요청한 사이즈보다 1개 더 반환됩니다.
-                    화면에서는 size 만큼 화면에 노출시키고, size 보다 1이클 때 다음 페이지를 요청해주세요.
-                    """)
     @GetMapping("/api/v1/user/assets-details")
+    @Override
     public ResponseEntity<DataResponse<AssetsDetailsTotalResponse>> getAssetsDetails(
             @Parameter(hidden = true) User user,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
@@ -84,9 +77,8 @@ public class AssetsDetailApiController {
         return ResponseEntity.ok(DataResponse.send(assetsDetails));
     }
 
-    @Operation(summary = "자산 상세내역 조회 API",
-            description = "자산 상세내역 조회합니다.")
     @GetMapping("/api/v1/user/assets-details/{assetsDetailId}")
+    @Override
     public ResponseEntity<DataResponse<AssetsDetailResponse>> getAssetsDetail(@PathVariable(name = "assetsDetailId") Long assetsDetailId) {
         AssetsDetailResponse assetsDetails = assetsDetailService.getAssetsDetail(assetsDetailId);
         return ResponseEntity.ok(DataResponse.send(assetsDetails));

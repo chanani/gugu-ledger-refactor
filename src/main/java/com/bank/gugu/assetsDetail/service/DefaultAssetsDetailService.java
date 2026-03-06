@@ -1,7 +1,7 @@
 package com.bank.gugu.assetsDetail.service;
 
 import com.bank.gugu.assets.repository.AssetsRepository;
-import com.bank.gugu.assetsDetail.AssetsDetailsInput;
+import com.bank.gugu.assetsDetail.input.AssetsDetailsInput;
 import com.bank.gugu.assetsDetail.repository.AssetsDetailRepository;
 import com.bank.gugu.assetsDetail.repository.condition.AssetsCondition;
 import com.bank.gugu.assetsDetail.service.request.AssetsDetailCreateRequest;

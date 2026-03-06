@@ -1,4 +1,4 @@
-package com.bank.gugu.assetsDetail;
+package com.bank.gugu.assetsDetail.input;
 
 import com.bank.gugu.assetsDetail.repository.condition.AssetsCondition;
 import com.bank.gugu.common.model.constant.RecordType;
