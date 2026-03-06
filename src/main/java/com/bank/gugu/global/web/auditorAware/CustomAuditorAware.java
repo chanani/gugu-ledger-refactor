@@ -1,6 +1,6 @@
 package com.bank.gugu.global.web.auditorAware;
 
-import com.bank.gugu.entity.user.User;
+import com.bank.gugu.user.model.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.AuditorAware;

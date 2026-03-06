@@ -1,13 +1,12 @@
 package com.bank.gugu.global.jwt;
 
-import com.bank.gugu.entity.common.constant.StatusType;
-import com.bank.gugu.domain.user.repository.UserRepository;
-import com.bank.gugu.entity.user.User;
+import com.bank.gugu.common.model.constant.StatusType;
+import com.bank.gugu.user.repository.UserRepository;
+import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.exception.AccountTokenException;
 import com.bank.gugu.global.exception.OperationErrorException;
 import com.bank.gugu.global.exception.dto.ErrorCode;
 import com.bank.gugu.global.security.CustomUserDetails;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;

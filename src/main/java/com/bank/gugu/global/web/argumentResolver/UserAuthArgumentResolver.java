@@ -1,6 +1,6 @@
 package com.bank.gugu.global.web.argumentResolver;
 
-import com.bank.gugu.entity.user.User;
+import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.exception.OperationErrorException;
 import com.bank.gugu.global.exception.dto.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;

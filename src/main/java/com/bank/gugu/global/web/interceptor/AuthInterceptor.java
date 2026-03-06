@@ -1,7 +1,7 @@
 package com.bank.gugu.global.web.interceptor;
 
-import com.bank.gugu.entity.common.constant.UserType;
-import com.bank.gugu.entity.user.User;
+import com.bank.gugu.common.model.constant.UserType;
+import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.annotation.NoneAuth;
 import com.bank.gugu.global.exception.AccountTokenException;
 import com.bank.gugu.global.exception.ForbiddenException;

@@ -1,0 +1,79 @@
+package com.bank.gugu.record.service.dto.request;
+
+import com.bank.gugu.assets.model.Assets;
+import com.bank.gugu.assetsDetail.model.AssetsDetail;
+import com.bank.gugu.category.model.Category;
+import com.bank.gugu.common.model.constant.BooleanYn;
+import com.bank.gugu.common.model.constant.PriceType;
+import com.bank.gugu.common.model.constant.RecordType;
+import com.bank.gugu.record.model.Records;
+import com.bank.gugu.user.model.User;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDate;
+
+public record RecordCreateRequest(
+        @Schema(description = "입/출금 타입", example = "DEPOSIT")
+        @NotNull(message = "입/출급 타입은 필수입니다.")
+        RecordType type,
+
+        @Schema(description = "수단", example = "CHECK_CARD")
+        @NotNull(message = "수단은 필수입니다.")
+        PriceType priceType,
+
+        @Schema(description = "금액", example = "10000")
+        @NotNull(message = "금액은 필수입니다.")
+        Integer price,
+
+        @Schema(description = "할부", example = "2")
+        Integer monthly,
+
+        @Schema(description = "메모", example = "마트 장보기")
+        String memo,
+
+        @Schema(description = "날짜(yyyy-mm-dd)", example = "2025-06-26")
+        @NotBlank(message = "날짜는 필수입니다.")
+        String useDate,
+
+        @Schema(description = "카테고리 ID", example = "30")
+        @NotNull(message = "카테고리는 필수입니다.")
+        Long categoryId,
+
+        @Schema(description = "자산그룹 ID", example = "3")
+        Long assetsId
+) {
+
+    public Records toEntity(User user, Category category, Assets assets) {
+        return Records.builder()
+                .user(user)
+                .category(category)
+                .assets(assets)
+                .type(this.type)
+                .price(type.equals(RecordType.DEPOSIT) ? this.price : -this.price)
+                .priceType(this.priceType)
+                .monthly(this.priceType.equals(PriceType.CARD) ? this.monthly : null)
+                .memo(this.memo)
+                .useDate(LocalDate.parse(this.useDate))
+                .build();
+    }
+
+    public AssetsDetail toAssetsDetail(User user, Assets assets, Records record, Category category) {
+        return AssetsDetail.builder()
+                .user(user)
+                .assets(assets)
+                .category(category)
+                .record(record)
+                .type(this.type)
+                .priceType(this.priceType)
+                .price(this.type.equals(RecordType.DEPOSIT) ? this.price : -this.price)
+                .balance(this.type.equals(RecordType.DEPOSIT) ?
+                        assets.getBalance() + price :
+                        assets.getBalance() - price)
+                .useDate(LocalDate.parse(this.useDate))
+                .active(BooleanYn.Y)
+                .memo(this.memo)
+                .build();
+    }
+}

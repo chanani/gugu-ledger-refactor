@@ -1,6 +1,6 @@
 package com.bank.gugu.entity;
 
-import com.bank.gugu.entity.common.constant.StatusType;
+import com.bank.gugu.common.model.constant.StatusType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
