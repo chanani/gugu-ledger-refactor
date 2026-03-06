@@ -11,7 +11,6 @@ import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.page.PageInput;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Assets Detail API Controller", description = "자산 상세 정보 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class AssetsDetailApiController implements AssetsDetailControllerDocs{
+public class AssetsDetailController implements AssetsDetailControllerDocs{
 
     private final AssetsDetailService assetsDetailService;
 

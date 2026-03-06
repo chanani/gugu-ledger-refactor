@@ -24,13 +24,12 @@ import java.util.List;
 @Tag(name = "Category API Controller", description = "카테고리 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class CategoryApiController {
+public class CategoryController implements CategoryControllerDocs {
 
     private final CategoryService categoryService;
 
-    @Operation(summary = "카테고리 등록 API",
-            description = "카테고리를 등록합니다.")
     @PostMapping("/api/v1/user/categories")
+    @Override
     public ResponseEntity<ApiResponse> addCategory(
             @Valid @RequestBody CategoryCreateRequest request,
             @AuthUser User user
@@ -39,9 +38,8 @@ public class CategoryApiController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "카테고리 수정 API",
-            description = "카테고리를 수정합니다.")
     @PutMapping("/api/v1/user/categories/{categoryId}")
+    @Override
     public ResponseEntity<ApiResponse> updateCategory(
             @PathVariable(name = "categoryId") Long categoryId,
             @Valid @RequestBody CategoryUpdateRequest request,
@@ -51,17 +49,15 @@ public class CategoryApiController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "카테고리 삭제 API",
-            description = "카테고리를 삭제합니다.")
     @DeleteMapping("/api/v1/user/categories/{categoryId}")
+    @Override
     public ResponseEntity<ApiResponse> updateCategory(@PathVariable(name = "categoryId") Long categoryId) {
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "카테고리 조회 API",
-            description = "카테고리를 조회합니다.")
     @GetMapping("/api/v1/user/categories")
+    @Override
     public ResponseEntity<DataResponse<List<CategoriesResponse>>> getCategories(
             @Parameter(hidden = true) User user,
             @Parameter(name = "type") RecordType type
@@ -87,7 +83,6 @@ public class CategoryApiController {
             @Valid @RequestBody List<CategoryUpdateOrderRequest> request,
             @Parameter(hidden = true) User user
     ) {
-        System.out.println(request.toString());
         categoryService.updateOrder(request, user);
         return ResponseEntity.ok(ApiResponse.ok());
     }

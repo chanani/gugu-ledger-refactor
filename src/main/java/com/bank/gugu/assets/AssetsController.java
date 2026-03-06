@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Assets API Controller", description = "자산 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class AssetsApiController implements AssetsControllerDocs {
+public class AssetsController implements AssetsControllerDocs {
 
     private final AssetsService assetsService;
 
