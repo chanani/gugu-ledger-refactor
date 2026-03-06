@@ -1,7 +1,6 @@
 package com.bank.gugu.common;
 
 
-import com.bank.gugu.global.annotation.NoneAuth;
 import com.bank.gugu.global.exception.dto.ErrorCode;
 import com.bank.gugu.global.exception.dto.ErrorCodeData;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,7 +16,6 @@ import java.util.List;
 @Controller
 public class CommonController {
 
-    @NoneAuth
     @GetMapping("/api/v1/none/error-codes")
     public String getErrorCodes(Model model) {
         List<ErrorCodeData> errorCodes = ErrorCode.getErrorCodes();

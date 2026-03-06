@@ -1,5 +1,6 @@
 package com.bank.gugu.global.web.argumentResolver;
 
+import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.exception.OperationErrorException;
 import com.bank.gugu.global.exception.dto.ErrorCode;
@@ -16,7 +17,7 @@ public class UserAuthArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return User.class.isAssignableFrom(parameter.getParameterType());
+        return parameter.hasParameterAnnotation(AuthUser.class);
     }
 
     @Override
