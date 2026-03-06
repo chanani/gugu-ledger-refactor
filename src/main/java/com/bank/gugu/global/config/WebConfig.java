@@ -17,6 +17,24 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    private final List<String> JWT_PATTERNS = List.of(
+            "/v3/api-docs/swagger-config",
+            "/signUp",
+            "/signIn",
+            "/error/**",
+            "/reissue",
+            "/favicon.ico"
+    );
+
+    private final List<String> SWAGGER_URL_PATTERNS = List.of(
+            "/gugu-bank/**",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/webjars/**",
+            "/swagger-ui.html"
+    );
+
     private final AuthInterceptor authInterceptor;
 
     @Override
@@ -29,25 +47,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(6000);
     }
 
-
-    // 해당 uri로 들어왔을 때 authHandlerInterceptor 작동하지 않음
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
-                .excludePathPatterns(
-                        "/swagger-resources/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/webjars/**",
-                        "/swagger-ui.html",
-                        "/v3/api-docs/swagger-config",
-                        "/signUp",
-                        "/signIn",
-                        "/error/**",
-                        "/reissue",
-                        "/gugu-bank/**",
-                        "/favicon.ico"
-                )
+                .excludePathPatterns(JWT_PATTERNS)
+                .excludePathPatterns(SWAGGER_URL_PATTERNS)
                 .addPathPatterns("/**");
     }
 
