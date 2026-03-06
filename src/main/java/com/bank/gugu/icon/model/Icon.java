@@ -1,6 +1,6 @@
 package com.bank.gugu.icon.model;
 
-import com.bank.gugu.entity.BaseEntity;
+import com.bank.gugu.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;

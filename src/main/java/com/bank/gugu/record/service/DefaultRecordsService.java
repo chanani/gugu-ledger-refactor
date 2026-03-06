@@ -18,7 +18,7 @@ import com.bank.gugu.record.service.dto.response.RecordsCurrentResponse;
 import com.bank.gugu.record.service.dto.response.RecordsMonthResponse;
 import com.bank.gugu.record.service.dto.response.RecordsResponse;
 import com.bank.gugu.recordsImage.repository.RecordsImageRepository;
-import com.bank.gugu.entity.BaseEntity;
+import com.bank.gugu.global.entity.BaseEntity;
 import com.bank.gugu.assets.model.Assets;
 import com.bank.gugu.assetsDetail.model.AssetsDetail;
 import com.bank.gugu.category.model.Category;

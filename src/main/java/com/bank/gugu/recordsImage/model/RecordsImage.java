@@ -1,6 +1,6 @@
 package com.bank.gugu.recordsImage.model;
 
-import com.bank.gugu.entity.BaseEntity;
+import com.bank.gugu.global.entity.BaseEntity;
 import com.bank.gugu.record.model.Records;
 import com.bank.gugu.user.model.User;
 import jakarta.persistence.*;

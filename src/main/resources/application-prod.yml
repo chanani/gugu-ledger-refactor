@@ -8,20 +8,10 @@ spring:
   application:
     name: gugubank
   datasource:
-    master:
-      hikari:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: ${MASTER_DB_URL}
-        read-only: false
-        username: ${MASTER_DB_USERNAME}
-        password: ${MASTER_DB_PASSWORD}
-    slave:
-      hikari:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: ${SLAVE_DB_URL}
-        read-only: true
-        username: ${SLAVE_DB_USERNAME}
-        password: ${SLAVE_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MASTER_DB_URL}
+    username: ${MASTER_DB_USERNAME}
+    password: ${MASTER_DB_PASSWORD}
 
   jpa:
     hibernate:

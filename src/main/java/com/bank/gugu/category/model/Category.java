@@ -1,6 +1,6 @@
 package com.bank.gugu.category.model;
 
-import com.bank.gugu.entity.BaseEntity;
+import com.bank.gugu.global.entity.BaseEntity;
 import com.bank.gugu.common.model.constant.RecordType;
 import com.bank.gugu.icon.model.Icon;
 import com.bank.gugu.user.model.User;

@@ -1,4 +1,4 @@
-package com.bank.gugu.entity;
+package com.bank.gugu.global.entity;
 
 import com.bank.gugu.common.model.constant.StatusType;
 import jakarta.persistence.Column;

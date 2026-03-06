@@ -19,25 +19,13 @@ spring:
       max-request-size: 100MB
 
   datasource:
-    master:
-      hikari:
-        connection-timeout: 30000
-        maximum-pool-size: 100
-        minimum-idle: 20
-        idle-timeout: 300000
-        max-lifetime: 1800000
-        connection-test-query: SELECT 1
-        pool-name: MasterHikariPool
-
-    slave:
-      hikari:
-        connection-timeout: 30000
-        maximum-pool-size: 100
-        minimum-idle: 20
-        idle-timeout: 300000
-        max-lifetime: 1800000
-        connection-test-query: SELECT 1
-        pool-name: SlaveHikariPool
+    hikari:
+      maximum-pool-size: 100
+      minimum-idle: 20
+      connection-timeout: 30000
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
 
   jpa:
     properties:

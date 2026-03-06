@@ -1,6 +1,6 @@
 package com.bank.gugu.assets.model;
 
-import com.bank.gugu.entity.BaseEntity;
+import com.bank.gugu.global.entity.BaseEntity;
 import com.bank.gugu.assetsDetail.model.AssetsDetail;
 import com.bank.gugu.common.model.constant.BooleanYn;
 import com.bank.gugu.common.model.constant.RecordType;
