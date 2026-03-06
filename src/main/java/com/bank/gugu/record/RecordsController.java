@@ -12,7 +12,6 @@ import com.bank.gugu.record.service.dto.response.RecordsResponse;
 import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,15 +28,15 @@ import java.util.List;
 @Tag(name = "Records API Controller", description = "입/출금 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class RecordsApiController implements RecordsControllerDocs{
+public class RecordsController implements RecordsControllerDocs{
 
     private final RecordsService recordsService;
 
-    @Operation(summary = "입/출금 내역 등록 API", description = "입/출금 내역을 등록합니다.")
     @PostMapping(value = "/api/v1/user/records", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE
     })
+    @Override
     public ResponseEntity<ApiResponse> addRecord(
             @Valid @RequestPart RecordCreateRequest request,
             @AuthUser User user,
@@ -47,18 +46,18 @@ public class RecordsApiController implements RecordsControllerDocs{
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "입/출금 내역 삭제 API", description = "입/출금 내역을 삭제합니다.")
     @DeleteMapping("/api/v1/user/records/{recordsId}")
+    @Override
     public ResponseEntity<ApiResponse> deleteRecord(@PathVariable(name = "recordsId") Long recordsId) {
         recordsService.deleteRecord(recordsId);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "입/출금 내역 수정 API", description = "입/출금 내역을 수정합니다.")
     @PutMapping(value = "/api/v1/user/records/{recordsId}", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE
     })
+    @Override
     public ResponseEntity<ApiResponse> updateRecord(
             @Valid @RequestPart RecordUpdateRequest request,
             @PathVariable(name = "recordsId") Long recordsId,
@@ -69,8 +68,8 @@ public class RecordsApiController implements RecordsControllerDocs{
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "입/출금 하루 내역 조회 API", description = "하루의 입/출금 내역을 조회합니다.")
     @GetMapping("/api/v1/user/records-current")
+    @Override
     public ResponseEntity<DataResponse<List<RecordsCurrentResponse>>> getRecordsCurrent(
             @Parameter(name = "currentDate") String currentDate, @Parameter(hidden = true) User user
     ) {
@@ -78,15 +77,15 @@ public class RecordsApiController implements RecordsControllerDocs{
         return ResponseEntity.ok(DataResponse.send(records));
     }
 
-    @Operation(summary = "입/출금 상세 내역 조회 API", description = "입/출금 상세 내역을 조회합니다.")
     @GetMapping("/api/v1/user/records/{recordsId}")
+    @Override
     public ResponseEntity<DataResponse<RecordResponse>> getRecord(@PathVariable(name = "recordsId") Long recordsId) {
         RecordResponse record = recordsService.getRecord(recordsId);
         return ResponseEntity.ok(DataResponse.send(record));
     }
 
-    @Operation(summary = "입/출금 한달 내역 조회 API", description = "한달 입/출금 내역을 조회합니다.")
     @GetMapping("/api/v1/user/records")
+    @Override
     public ResponseEntity<DataResponse<List<RecordsResponse>>> getRecords(
             @Parameter(name = "yearMonth") String yearMonth, @Parameter(hidden = true) User user
     ) {
@@ -94,8 +93,8 @@ public class RecordsApiController implements RecordsControllerDocs{
         return ResponseEntity.ok(DataResponse.send(records));
     }
 
-    @Operation(summary = "입/출금 메모 수정 API", description = "입/출금 메모를 수정합니다.")
     @PutMapping("/api/v1/user/records-memo/{recordsId}")
+    @Override
     public ResponseEntity<ApiResponse> updateMemo(
             @PathVariable(name = "recordsId") Long recordsId,
             @Valid @RequestBody RecordUpdateMemoRequest request
@@ -104,8 +103,8 @@ public class RecordsApiController implements RecordsControllerDocs{
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "캘린더의 입/출금 내역 및 총 금액 조회 API", description = "캘린더의 입/출금 내역 및 총 금액을 조회합니다.")
     @GetMapping("/api/v1/user/records-calendar")
+    @Override
     public ResponseEntity<DataResponse<RecordsCalendarResponse>> getCalendarRecords(
             @Parameter(name = "yearMonth", example = "2025-06") String yearMonth, @Parameter(hidden = true) User user
     ) {

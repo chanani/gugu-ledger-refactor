@@ -19,19 +19,19 @@ import java.util.List;
 @Tag(name = "Records Image API Controller", description = "입/출금 이미지 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class RecordsImageApiController {
+public class RecordsImageController implements RecordsImageControllerDocs {
 
     private final RecordsImageService recordsImageService;
 
-    @Operation(summary = "입/출금 내역 이미지 파일 삭제 API", description = "입/출금 내역에 등록된 이미지 파일을 삭제합니다.")
     @DeleteMapping(value = "/api/v1/user/records-image/{recordsImageId}")
+    @Override
     public ResponseEntity<ApiResponse> deleteRecord(@PathVariable(name = "recordsImageId") Long recordsImageId) {
         recordsImageService.deleteRecordImage(recordsImageId);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "입/출금 내역 이미지 파일 등록 API", description = "입/출금 내역에 등록된 이미지 파일을 등록합니다.")
     @PostMapping(value = "/api/v1/user/records-image/{recordsId}", consumes = {"multipart/form-data"})
+    @Override
     public ResponseEntity<ApiResponse> addRecord(
             @PathVariable(name = "recordsId") Long recordsId,
             @RequestPart(value = "uploadImage") MultipartFile inputFile,
@@ -41,8 +41,8 @@ public class RecordsImageApiController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "입/출금 내역 이미지 파일 조회 API", description = "입/출금 내역에 등록된 월별 이미지 목록을 조회합니다.")
     @GetMapping(value = "/api/v1/user/records-image")
+    @Override
     public ResponseEntity<DataResponse<List<RecordsImagesResponse>>> getRecordsImage(
             @Parameter(name = "yearMonth") String yearMonth,
             @Parameter(hidden = true) User user

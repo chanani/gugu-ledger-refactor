@@ -19,8 +19,8 @@ public class IconController implements IconControllerDocs{
 
     private final IconService iconService;
 
-    @Operation(summary = "아이콘 목록 조회 API", description = "아이콘 목록을 조회합니다.")
     @GetMapping(value = "/api/v1/user/icons")
+    @Override
     public ResponseEntity<DataResponse<List<IconsResponse>>> getIcons() {
         List<IconsResponse> icons = iconService.getIcons();
         return ResponseEntity.ok(DataResponse.send(icons));

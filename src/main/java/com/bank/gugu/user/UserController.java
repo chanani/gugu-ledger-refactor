@@ -27,38 +27,34 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "User API Controller", description = "회원 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class UserApiController {
+public class UserController implements UserControllerDocs{
 
     private final UserService userService;
     private final UserRepository userRepository;
 
-    @Operation(summary = "회원가입 API",
-            description = "회원가입을 진행합니다.")
     @PostMapping("/api/v1/none/join")
+    @Override
     public ResponseEntity<ApiResponse> join(@Valid @RequestBody JoinRequest request) {
         userService.join(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "로그인 API",
-            description = "로그인을 진행합니다.")
     @PostMapping("/api/v1/none/login")
+    @Override
     public ResponseEntity<DataResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) throws Exception {
         LoginResponse response = userService.login(request);
         return ResponseEntity.ok(DataResponse.send(response));
     }
 
-    @Operation(summary = "회원 정보 조회 API",
-            description = "회원 정보를 조회합니다.")
     @GetMapping("/api/v1/user/info")
+    @Override
     public ResponseEntity<DataResponse<UserInfoResponse>> getUserInfo(@AuthUser User user) {
         UserInfoResponse userInfo = userService.getInfo(user);
         return ResponseEntity.ok(DataResponse.send(userInfo));
     }
 
-    @Operation(summary = "비밀번호 수정 API",
-            description = "비밀번호를 수정합니다.")
     @PutMapping("/api/v1/user/update-password")
+    @Override
     public ResponseEntity<ApiResponse> updateUserPassword(
             @Valid @RequestBody UserUpdatePasswordRequest request,
             @AuthUser User user
@@ -67,9 +63,8 @@ public class UserApiController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "회원정보 수정 API",
-            description = "회원정보를 수정합니다.")
     @PutMapping("/api/v1/user/info")
+    @Override
     public ResponseEntity<ApiResponse> updateUserInfo(
             @Valid @RequestBody UserUpdateInfoRequest request,
             @AuthUser User user
@@ -78,29 +73,22 @@ public class UserApiController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "아이디 중복 검사 API",
-            description = "아이디 사용 가능 여부를 확인합니다.")
     @GetMapping("/api/v1/none/check/id")
+    @Override
     public ResponseEntity<DataResponse<Boolean>> checkUserId(@Parameter(name = "userId") String userId) {
         boolean checkUserId = userRepository.existsByUserId(userId);
         return ResponseEntity.ok(DataResponse.send(checkUserId));
     }
 
-    @Operation(summary = "이메일 중복 검사 API",
-            description = "이메일 사용 가능 여부를 확인합니다.")
     @GetMapping("/api/v1/none/check/email")
+    @Override
     public ResponseEntity<DataResponse<Boolean>> checkEmail(@Parameter(name = "email") String email) {
         boolean checkEmail = userRepository.existsByEmailAndStatus(email, StatusType.ACTIVE);
         return ResponseEntity.ok(DataResponse.send(checkEmail));
     }
 
-    @Operation(summary = "인증번호 발송 API",
-            description = """
-                    아이디 또는 비밀번호 찾기 시 이메일을 발송합니다.
-                    type : { ID : '아이디 찾기', PASSWORD : '비밀번호 찾기'}
-                    비밀번호 찾기일 경우 userId를 같이 전달해주세요.
-                    """)
     @PostMapping("/api/v1/none/email-send")
+    @Override
     public ResponseEntity<ApiResponse> authEmailSend(@Valid @RequestBody FindAuthSendRequest request) {
 
         userService.authEmailSend(request);
@@ -108,9 +96,8 @@ public class UserApiController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "인증번호 확인 API",
-            description = "인증번호를 확인합니다.")
     @GetMapping("/api/v1/none/email-check")
+    @Override
     public ResponseEntity<ApiResponse> authEmailCheck(
             @RequestParam(name = "email") String email,
             @RequestParam(name = "authNumber") String authNumber) {
@@ -121,24 +108,16 @@ public class UserApiController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @Operation(summary = "회원 아이디를 조회합니다. API",
-            description = """
-                    이메일을 통해 회원 아이디를 조회합니다.
-                    아이디의 마지막 3글자는 '*'로 처리됩니다.
-                    """)
     @GetMapping("/api/v1/none/find-id")
+    @Override
     public ResponseEntity<DataResponse<FindUserIdRequest>> getUserId(
             @RequestParam(name = "email") String email) {
-
-        // 회원 아이디 조회
         FindUserIdRequest response = userService.findUserId(email);
-
         return ResponseEntity.ok(DataResponse.send(response));
     }
 
-    @Operation(summary = "비밀번호 재등록 API",
-            description = "비밀번호를 재등록합니다.")
     @PutMapping("/api/v1/none/update-find-password")
+    @Override
     public ResponseEntity<ApiResponse> updateUserPassword(
             @Valid @RequestBody UserUpdateFindPasswordRequest request
     ) {
