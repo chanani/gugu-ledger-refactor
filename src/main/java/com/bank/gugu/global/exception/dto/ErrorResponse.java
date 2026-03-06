@@ -9,7 +9,7 @@ public record ErrorResponse(
     public static ErrorResponse error(ErrorCode errorCode) {
         return new ErrorResponse(
                 errorCode.getCode(),
-                errorCode.getStatus(),
+                errorCode.getStatus().value(),
                 errorCode.getMessage()
         );
     }

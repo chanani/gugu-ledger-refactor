@@ -2,19 +2,20 @@ package com.bank.gugu.global.exception;
 
 import com.bank.gugu.global.exception.dto.ErrorCode;
 import lombok.Getter;
+import org.springframework.web.server.ResponseStatusException;
 
 @Getter
-public class AdviceBaseException extends RuntimeException {
+public abstract class AdviceBaseException extends ResponseStatusException {
 
     private final ErrorCode errorCode;
 
-    public AdviceBaseException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
+    protected AdviceBaseException(ErrorCode errorCode) {
+        super(errorCode.getStatus(), errorCode.getMessage());
         this.errorCode = errorCode;
     }
 
-    public AdviceBaseException(ErrorCode errorCode, String message) {
-        super(message);
+    protected AdviceBaseException(ErrorCode errorCode, String message) {
+        super(errorCode.getStatus(), message);
         this.errorCode = errorCode;
     }
 
