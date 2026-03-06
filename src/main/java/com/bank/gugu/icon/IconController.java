@@ -15,7 +15,7 @@ import java.util.List;
 @Tag(name = "Icon API Controller", description = "아이콘 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class IconApiController {
+public class IconController implements IconControllerDocs{
 
     private final IconService iconService;
 

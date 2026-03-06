@@ -29,7 +29,7 @@ import java.util.List;
 @Tag(name = "Records API Controller", description = "입/출금 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class RecordsApiController {
+public class RecordsApiController implements RecordsControllerDocs{
 
     private final RecordsService recordsService;
 
