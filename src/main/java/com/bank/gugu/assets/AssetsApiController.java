@@ -5,6 +5,7 @@ import com.bank.gugu.assets.service.request.AssetsCreateRequest;
 import com.bank.gugu.assets.service.request.AssetsUpdateRequest;
 import com.bank.gugu.assets.service.response.AssetsPageResponse;
 import com.bank.gugu.assets.service.response.AssetsResponse;
+import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
@@ -28,7 +29,7 @@ public class AssetsApiController {
     @PostMapping("/api/v1/user/assets")
     public ResponseEntity<ApiResponse> addAssets(
             @Valid @RequestBody AssetsCreateRequest request,
-            @Parameter(hidden = true) User user
+            @AuthUser User user
     ) {
         assetsService.addAssets(request,user);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -56,7 +57,7 @@ public class AssetsApiController {
     @Operation(summary = "자산그룹 목록 조회 API",
             description = "자산 그룹 목록을 조회합니다.")
     @GetMapping("/api/v1/user/assets")
-    public ResponseEntity<DataResponse<AssetsPageResponse>> getAssets(@Parameter(hidden = true) User user) {
+    public ResponseEntity<DataResponse<AssetsPageResponse>> getAssets(@AuthUser User user) {
         AssetsPageResponse assets = assetsService.getAssetsList(user);
         return ResponseEntity.ok(DataResponse.send(assets));
     }

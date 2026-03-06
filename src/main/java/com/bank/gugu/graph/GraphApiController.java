@@ -1,5 +1,6 @@
 package com.bank.gugu.graph;
 
+import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.graph.input.GraphsInput;
 import com.bank.gugu.graph.service.GraphService;
 import com.bank.gugu.graph.service.dto.response.GraphsResponse;
@@ -24,7 +25,7 @@ public class GraphApiController {
     @GetMapping(value = "/api/v1/user/graphs")
     public ResponseEntity<DataResponse<GraphsResponse>> getGraph(
             @ParameterObject @ModelAttribute GraphsInput input,
-            @Parameter(hidden = true) User user
+            @AuthUser User user
     ) {
         GraphsResponse graph = graphService.getGraphs(input, user);
         return ResponseEntity.ok(DataResponse.send(graph));

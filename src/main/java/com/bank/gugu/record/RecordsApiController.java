@@ -1,5 +1,6 @@
 package com.bank.gugu.record;
 
+import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.record.service.RecordsService;
 import com.bank.gugu.record.service.dto.request.RecordCreateRequest;
 import com.bank.gugu.record.service.dto.request.RecordUpdateMemoRequest;
@@ -39,7 +40,7 @@ public class RecordsApiController {
     })
     public ResponseEntity<ApiResponse> addRecord(
             @Valid @RequestPart RecordCreateRequest request,
-            @Parameter(hidden = true) User user,
+            @AuthUser User user,
             @RequestPart(value = "files", required = false) List<MultipartFile> inputFiles
     ) throws IOException {
         recordsService.addRecord(request, user, inputFiles);

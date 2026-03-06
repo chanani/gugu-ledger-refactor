@@ -1,5 +1,6 @@
 package com.bank.gugu.recordsFavorite;
 
+import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.recordsFavorite.service.RecordsFavoriteService;
 import com.bank.gugu.recordsFavorite.service.dto.request.RecordsFavoriteCreateRequest;
 import com.bank.gugu.recordsFavorite.service.dto.request.RecordsFavoriteUpdateRequest;
@@ -29,7 +30,7 @@ public class RecordsFavoriteApiController {
     @PostMapping(value = "/api/v1/user/records-favorite")
     public ResponseEntity<ApiResponse> addRecordsFavorite(
             @Valid @RequestBody RecordsFavoriteCreateRequest request,
-            @Parameter(hidden = true) User user
+            @AuthUser User user
     ) {
         recordsFavoriteService.addRecordsFavorite(request, user);
         return ResponseEntity.ok(ApiResponse.ok());

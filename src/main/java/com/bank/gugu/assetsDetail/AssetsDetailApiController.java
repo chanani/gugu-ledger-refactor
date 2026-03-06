@@ -5,6 +5,7 @@ import com.bank.gugu.assetsDetail.service.request.AssetsDetailCreateRequest;
 import com.bank.gugu.assetsDetail.service.request.AssetsDetailUpdateRequest;
 import com.bank.gugu.assetsDetail.service.response.AssetsDetailResponse;
 import com.bank.gugu.assetsDetail.service.response.AssetsDetailsTotalResponse;
+import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.page.PageInput;
 import com.bank.gugu.global.response.ApiResponse;
@@ -39,7 +40,7 @@ public class AssetsDetailApiController {
     @PostMapping("/api/v1/user/assets-detail")
     public ResponseEntity<ApiResponse> addAssetsDetail(
             @Valid @RequestBody AssetsDetailCreateRequest request,
-            @Parameter(hidden = true) User user
+            @AuthUser User user
     ) {
         assetsDetailService.addAssetsDetail(request, user);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -51,7 +52,7 @@ public class AssetsDetailApiController {
     public ResponseEntity<ApiResponse> updateAssetsDetail(
             @PathVariable(name = "assetsDetailId") Long assetsDetailId,
             @Valid @RequestBody AssetsDetailUpdateRequest request,
-            @Parameter(hidden = true) User user
+            @AuthUser User user
     ) {
         assetsDetailService.updateAssetsDetail(assetsDetailId, request, user);
         return ResponseEntity.ok(ApiResponse.ok());

@@ -7,6 +7,7 @@ import com.bank.gugu.category.service.dto.request.CategoryUpdateRequest;
 import com.bank.gugu.category.service.dto.response.CategoriesResponse;
 import com.bank.gugu.category.service.dto.response.CategoryResponse;
 import com.bank.gugu.common.model.constant.RecordType;
+import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
@@ -32,7 +33,7 @@ public class CategoryApiController {
     @PostMapping("/api/v1/user/categories")
     public ResponseEntity<ApiResponse> addCategory(
             @Valid @RequestBody CategoryCreateRequest request,
-            @Parameter(hidden = true) User user
+            @AuthUser User user
     ) {
         categoryService.addCategory(request, user);
         return ResponseEntity.ok(ApiResponse.ok());

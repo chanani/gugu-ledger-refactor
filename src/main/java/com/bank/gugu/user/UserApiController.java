@@ -61,7 +61,7 @@ public class UserApiController {
     @PutMapping("/api/v1/user/update-password")
     public ResponseEntity<ApiResponse> updateUserPassword(
             @Valid @RequestBody UserUpdatePasswordRequest request,
-            @Parameter(hidden = true) User user
+            @AuthUser User user
     ) {
         userService.updateUserPassword(request, user);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -72,7 +72,7 @@ public class UserApiController {
     @PutMapping("/api/v1/user/info")
     public ResponseEntity<ApiResponse> updateUserInfo(
             @Valid @RequestBody UserUpdateInfoRequest request,
-            @Parameter(hidden = true) User user
+            @AuthUser User user
     ) {
         userService.updateUserInfo(request, user);
         return ResponseEntity.ok(ApiResponse.ok());
