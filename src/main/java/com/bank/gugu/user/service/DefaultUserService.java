@@ -45,14 +45,14 @@ public class DefaultUserService implements UserService {
     @Override
     @Transactional
     public void join(JoinRequest request) {
-        validate(request);
+        validateJoinRequest(request);
         User newUser = request.toEntity();
         User user = userRepository.save(newUser);
         log.info("join success ! user id = {}", user.getUserId());
         categoryService.addCategories(user);
     }
 
-    private void validate(JoinRequest request) {
+    private void validateJoinRequest(JoinRequest request) {
         checkUserId(request.userId());
         equalPassword(request.password(), request.passwordCheck());
         checkEmail(request.email());
