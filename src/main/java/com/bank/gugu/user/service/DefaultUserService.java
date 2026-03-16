@@ -79,7 +79,7 @@ public class DefaultUserService implements UserService {
         String accessToken = jwtProvider.createAccessToken(user.getId());
         String refreshToken = jwtProvider.createRefreshToken(user.getId());
 
-        return new LoginResponse(accessToken,refreshToken);
+        return new LoginResponse(accessToken, refreshToken);
     }
 
 
