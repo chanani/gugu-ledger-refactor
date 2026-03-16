@@ -45,14 +45,6 @@ decorator:
     p6spy:
       enable-logging: true
 
-# log
-logging:
-  config: classpath:logback-spring.xml
-  file:
-    path: app/logs
-  level:
-    p6spy: info
-    org.hibernate.SQL: off
 # jwt
 jwt:
   secret-key: sale-2025-delivery+1004kksale-2025-delivery+1004kksale-2025-delivery+1014kk

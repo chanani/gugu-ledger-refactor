@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <!-- 공통 패턴 변수화 -->
+        <Property name="LOG_PATH">logs</Property>
+        <Property name="APP_NAME">app</Property>
+        <Property name="CONSOLE_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %highlight{[%-5level]}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=blue, TRACE=white} [%t] %cyan{%c{1}} - %msg%n</Property>
+        <Property name="FILE_PATTERN">%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%t] %c{1} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- 콘솔 출력 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${CONSOLE_PATTERN}" disableAnsi="false"/>
+        </Console>
+
+        <!-- 전체 로그 파일 (날짜별 + 용량별 rolling) -->
+        <RollingFile name="FileAppender"
+                     fileName="${LOG_PATH}/${APP_NAME}.log"
+                     filePattern="${LOG_PATH}/${APP_NAME}-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="${FILE_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+        <!-- ERROR 레벨만 별도 파일로 저장 -->
+        <RollingFile name="ErrorAppender"
+                     fileName="${LOG_PATH}/${APP_NAME}-error.log"
+                     filePattern="${LOG_PATH}/${APP_NAME}-error-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="${FILE_PATTERN}"/>
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+
+        <!-- 내 패키지 DEBUG -->
+        <Logger name="com.back" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+            <AppenderRef ref="ErrorAppender"/>
+        </Logger>
+
+        <!--  SQL만 출력 -->
+        <Logger name="jdbc.sqlonly" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <!--  SQL 실행시간 출력 -->
+        <Logger name="jdbc.sqltiming" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <!--  결과 테이블 형태 -->
+        <Logger name="jdbc.resultsettable" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <!--  불필요한 log4jdbc 로그 제거 -->
+        <Logger name="jdbc.resultset" level="OFF" additivity="false"/>
+        <Logger name="jdbc.connection" level="OFF" additivity="false"/>
+        <Logger name="jdbc.audit" level="OFF" additivity="false"/>
+
+        <!-- Spring 프레임워크 로그 최소화 -->
+        <Logger name="org.springframework" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <!-- Hibernate SQL 로그 -->
+        <Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <!-- Root 설정 -->
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+            <AppenderRef ref="ErrorAppender"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>
