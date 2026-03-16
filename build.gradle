@@ -17,6 +17,11 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+    }
 }
 
 repositories {
@@ -87,6 +92,9 @@ dependencies {
 
     // jodah : 시간 만료 라이브러리
     implementation 'net.jodah:expiringmap:0.5.9'
+
+    // log4j2
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
 
 }
 
