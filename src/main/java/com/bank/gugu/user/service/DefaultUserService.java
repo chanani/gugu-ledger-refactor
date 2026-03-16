@@ -26,6 +26,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.bank.gugu.user.mapper.UserMapper.fromJoinRequest;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -46,15 +48,15 @@ public class DefaultUserService implements UserService {
     @Transactional
     public void join(JoinRequest request) {
         validateJoinRequest(request);
-        User newUser = request.toEntity();
-        User user = userRepository.save(newUser);
-        log.info("join success ! user id = {}", user.getUserId());
+
+        User user = userRepository.save(fromJoinRequest(request, passwordEncoder));
         categoryService.addCategories(user);
+
+        log.info("join success ! user id = {}", user.getUserId());
     }
 
     private void validateJoinRequest(JoinRequest request) {
         checkUserId(request.userId());
-        equalPassword(request.password(), request.passwordCheck());
         checkEmail(request.email());
     }
 
@@ -183,7 +185,7 @@ public class DefaultUserService implements UserService {
      */
     private void checkEmail(String email) {
         if (userRepository.existsByEmailAndStatus(email, StatusType.ACTIVE)) {
-            throw new OperationErrorException(ErrorCode.NOT_FOUND_EMAIL);
+            throw new OperationErrorException(ErrorCode.EXISTS_EMAIL);
         }
     }
 
