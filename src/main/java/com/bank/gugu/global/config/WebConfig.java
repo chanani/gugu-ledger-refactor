@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -17,16 +16,7 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final List<String> JWT_PATTERNS = List.of(
-            "/v3/api-docs/swagger-config",
-            "/signUp",
-            "/signIn",
-            "/error/**",
-            "/reissue",
-            "/favicon.ico"
-    );
-
-    private final List<String> SWAGGER_URL_PATTERNS = List.of(
+    private static final List<String> SWAGGER_PATTERNS = List.of(
             "/gugu-bank/**",
             "/swagger-resources/**",
             "/swagger-ui/**",
@@ -35,13 +25,21 @@ public class WebConfig implements WebMvcConfigurer {
             "/swagger-ui.html"
     );
 
+    private static final List<String> PUBLIC_PATTERNS = List.of(
+            "/",
+            "/favicon.ico",
+            "/error/**",
+            "/reissue",
+            "/api/v1/none/**"
+    );
+
     private final AuthInterceptor authInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
-                .excludePathPatterns(JWT_PATTERNS)
-                .excludePathPatterns(SWAGGER_URL_PATTERNS)
+                .excludePathPatterns(PUBLIC_PATTERNS)
+                .excludePathPatterns(SWAGGER_PATTERNS)
                 .addPathPatterns("/**");
     }
 

@@ -1,17 +1,12 @@
 package com.bank.gugu.user.service.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Getter;
 
-@Getter
-@Builder
-public class LoginResponse {
+public record LoginResponse(
+        @Schema(description = "accessToken")
+        String accessToken,
 
-    @Schema(description = "accessToken")
-    private String accessToken;
-
-    @Schema(description = "refreshToken")
-    private String refreshToken;
-
+        @Schema(description = "refreshToken")
+        String refreshToken
+) {
 }

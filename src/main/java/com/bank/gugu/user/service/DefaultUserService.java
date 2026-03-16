@@ -45,19 +45,17 @@ public class DefaultUserService implements UserService {
     @Override
     @Transactional
     public void join(JoinRequest request) {
-        // 아이디 중복 검사
-        checkUserId(request.userId());
-        // 비밀번호 일치 여부 확인
-        equalPassword(request.password(), request.passwordCheck());
-        // 이메일 중복 검사
-        checkEmail(request.email());
-        // Entity로 변환
+        validateJoinRequest(request);
         User newUser = request.toEntity();
-        // 회원가입
         User user = userRepository.save(newUser);
         log.info("join success ! user id = {}", user.getUserId());
-        // 기본 카테고리 생성
         categoryService.addCategories(user);
+    }
+
+    private void validateJoinRequest(JoinRequest request) {
+        checkUserId(request.userId());
+        equalPassword(request.password(), request.passwordCheck());
+        checkEmail(request.email());
     }
 
     @Override
@@ -78,27 +76,19 @@ public class DefaultUserService implements UserService {
         // 접속일 기록
         user.updateLastVisit();
 
-        // accessToken 발급
         String accessToken = jwtProvider.createAccessToken(user.getId());
-        // refreshToken 발급
         String refreshToken = jwtProvider.createRefreshToken(user.getId());
 
-        return LoginResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return new LoginResponse(accessToken, refreshToken);
     }
 
 
     @Override
     @Transactional
     public void updateUserPassword(UserUpdatePasswordRequest request, User user) {
-        // 비밀번호 일치 여부 확인
         equalPassword(request.password(), request.passwordCheck());
-        // 회원 정보 조회
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
-        // 비밀번호 변경
         findUser.updatePassword(request.password());
     }
 
@@ -112,17 +102,14 @@ public class DefaultUserService implements UserService {
     @Override
     @Transactional
     public void updateUserInfo(UserUpdateInfoRequest request, User user) {
-        // 회원 정보 조회
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
-        // dto to Entity
         User newEntity = request.toEntity();
         findUser.updatePInfo(newEntity);
     }
 
     @Override
     public void authEmailSend(FindAuthSendRequest request) {
-
         if (request.type().equals(FindType.ID)) {
             // 존재하는 이메일인지 체크
             if (!userRepository.existsByEmailAndStatus(request.email(), StatusType.ACTIVE)) {
@@ -135,7 +122,6 @@ public class DefaultUserService implements UserService {
             }
         }
 
-        // 이메일 발송
         mailSendUtil.sendEmail(request.email());
     }
 
@@ -159,10 +145,8 @@ public class DefaultUserService implements UserService {
     public void updateFindUserPassword(UserUpdateFindPasswordRequest request) {
         User findUser = userRepository.findByUserIdAndStatus(request.userId(), StatusType.ACTIVE)
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
-        // 비밀번호 일치 여부 확인
-        equalPassword(request.password(), request.passwordCheck());
 
-        // 비밀번호 변경
+        equalPassword(request.password(), request.passwordCheck());
         findUser.updatePassword(request.password());
     }
 

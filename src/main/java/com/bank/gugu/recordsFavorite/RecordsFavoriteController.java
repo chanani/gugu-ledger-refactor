@@ -21,7 +21,7 @@ import java.util.List;
 @Tag(name = "Records Favorite API Controller", description = "입/출금 기록 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class RecordsFavoriteController implements RecordsFavoriteControllerDocs{
+public class RecordsFavoriteController implements RecordsFavoriteControllerDocs {
 
     private final RecordsFavoriteService recordsFavoriteService;
 
