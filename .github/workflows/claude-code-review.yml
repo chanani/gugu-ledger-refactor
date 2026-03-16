@@ -2,27 +2,14 @@ name: Claude Code Review
 
 on:
   pull_request:
-    types: [opened, synchronize, ready_for_review, reopened]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
-
+    types: [ opened, synchronize, ready_for_review, reopened ]
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
-      issues: read
+      pull-requests: write
+      issues: write
       id-token: write
 
     steps:
@@ -36,9 +23,47 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-          plugins: 'code-review@claude-code-plugins'
-          prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
+          prompt: |
+            PR #${{ github.event.pull_request.number }}을 아래 지침에 따라 코드 리뷰해줘.
+            리뷰는 한국어로 작성하고, 각 항목별로 문제가 있는 경우에만 해당 섹션을 포함해줘.
 
+            ## 1. 객체지향 생활 체조 원칙
+            - **1단계 들여쓰기**: 메서드 내 중첩 if/for가 있으면 메서드 추출 리팩토링 제안
+            - **else 금지**: else 키워드 발견 시 Early Return 패턴으로 대안 제시
+            - **원시값 포장**: String, int, long 등 원시값을 그대로 사용하는 경우 Value Object(VO) 래핑 권고
+            - **디미터 법칙**: `a.getB().getC()` 같은 체인 호출 발견 시 지적
+            - **일급 컬렉션**: List/Map을 필드로 그대로 노출하는 클래스는 전용 컬렉션 클래스 제안
+            - **작은 클래스**: 상태 변수(필드)가 3개를 초과하는 클래스 지적
+            - **Rich Domain Model**: Service 계층에 비즈니스 로직이 있으면 Entity 내부로 이동 권고, Setter 사용 지양
+
+            ## 2. 네이밍 컨벤션
+            - 의도가 불분명한 변수명(`data`, `result`, `temp`, `list`, `obj`) 발견 시 도메인 언어 기반 구체적인 이름 대안 제시
+            - 메서드명은 동사로 시작하는지 확인 (`get`, `find`, `create`, `update`, `delete`, `validate` 등)
+            - Boolean 변수/메서드는 `is`, `has`, `can` 접두사 사용 권고
+            - 약어 사용 지양 (`usr` → `user`, `req` → `request`, `res` → `response`)
+            - 축약 없이 의미를 명확하게 전달하는 이름인지 확인
+
+            ## 3. 에러 처리
+            - Checked Exception 대신 `RuntimeException`을 상속한 커스텀 예외 사용 권고
+            - catch 블록에서 예외를 무시하거나 단순 출력만 하는 경우 지적
+            - 에러 메시지에 원인과 컨텍스트 정보가 포함되어 있는지 확인
+            - 전역 예외 핸들러(`@RestControllerAdvice`) 패턴과 일관성 있게 처리되는지 확인
+
+            ## 4. 테스트 코드
+            - 새로운 비즈니스 로직 추가 시 대응하는 테스트 코드가 없으면 작성 요청
+            - 테스트 메서드명이 `메서드명_상황_기대결과` 형식으로 행위를 명확히 설명하는지 확인
+            - 단순 getter/setter 검증이 아닌 실제 비즈니스 시나리오를 테스트하는지 확인
+            - 테스트 간 독립성이 보장되는지 확인 (공유 상태, 순서 의존성 등)
+
+            ## 5. Spring 관련
+            - 데이터 변경(INSERT/UPDATE/DELETE) 작업에 `@Transactional` 누락 여부 확인
+            - JPA 연관관계 조회 시 N+1 문제 발생 가능성 지적 (Lazy Loading + 반복 조회 패턴)
+            - Controller에 비즈니스 로직이 위치하면 Service 계층으로 이동 권고
+            - DTO ↔ Entity 변환 위치가 적절한지 확인 (Controller가 아닌 Service 또는 DTO 내부)
+
+            ## 6. 보안
+            - 인증(`@AuthUser`, JWT) 또는 인가(`ROLE_USER`)가 누락된 엔드포인트 확인
+            - 비밀번호, 토큰, 개인정보가 로그에 출력되는지 확인
+            - 사용자 입력값 검증(`@Valid`, `@NotNull` 등) 누락 여부 확인
+            - 다른 사용자의 리소스에 접근 가능한 권한 검증 누락 여부 확인 (수평적 권한 상승)
+          claude_args: "--allowedTools Bash(gh pr:*),Bash(gh api:*)"
