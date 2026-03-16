@@ -6,19 +6,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public record Password(String value) {
 
+    private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
+
     public static Password of(String raw, String rawCheck) {
         validate(raw, rawCheck);
         return new Password(encode(raw));
     }
 
-    public static void validate(String raw, String rawCheck) {
+    private static void validate(String raw, String rawCheck) {
         if (!raw.equals(rawCheck)) {
             throw new OperationErrorException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
     }
 
     private static String encode(String raw) {
-        return new BCryptPasswordEncoder().encode(raw);
+        return ENCODER.encode(raw);
     }
 
 }
