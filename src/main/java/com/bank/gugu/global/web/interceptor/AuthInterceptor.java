@@ -69,19 +69,5 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     }
 
-    /**
-     * 인증 토큰 추출
-     */
-    private String resolveToken(HttpServletRequest request) {
-        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        // AUTHORIZATION 헤더가 존재하면서 Bearer 토큰인 경우 순수 토큰 반환
-        if (!ObjectUtils.isEmpty(authorization) && authorization.startsWith("Bearer ")) {
-            return authorization.substring(7).trim();
-        }
-
-        throw new ForbiddenException(ErrorCode.ACCESS_TOKEN_NOT_FOUND);
-    }
-
 
 }

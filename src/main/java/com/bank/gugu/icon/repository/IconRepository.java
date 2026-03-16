@@ -9,6 +9,5 @@ import java.util.Optional;
 
 public interface IconRepository extends JpaRepository<Icon, Integer> {
     Optional<Icon> findByIdAndStatus(Integer icon, StatusType statusType);
-
     List<Icon> findAllByStatus(StatusType statusType);
 }

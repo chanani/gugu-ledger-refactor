@@ -16,7 +16,6 @@ import com.bank.gugu.common.model.constant.StatusType;
 import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "User API Controller", description = "회원 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class UserController implements UserControllerDocs{
+public class UserController implements UserControllerDocs {
 
     private final UserService userService;
     private final UserRepository userRepository;
@@ -90,9 +89,7 @@ public class UserController implements UserControllerDocs{
     @PostMapping("/api/v1/none/email-send")
     @Override
     public ResponseEntity<ApiResponse> authEmailSend(@Valid @RequestBody FindAuthSendRequest request) {
-
         userService.authEmailSend(request);
-
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
@@ -101,10 +98,7 @@ public class UserController implements UserControllerDocs{
     public ResponseEntity<ApiResponse> authEmailCheck(
             @RequestParam(name = "email") String email,
             @RequestParam(name = "authNumber") String authNumber) {
-
-        // 인증번호 일치 여부 확인
         userService.authEmailCheck(email, authNumber);
-
         return ResponseEntity.ok(ApiResponse.ok());
     }
 

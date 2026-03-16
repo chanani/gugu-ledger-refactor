@@ -17,7 +17,7 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final List<String> JWT_PATTERNS = List.of(
+    private static final List<String> JWT_PATTERNS = List.of(
             "/v3/api-docs/swagger-config",
             "/signUp",
             "/signIn",
@@ -26,7 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
             "/favicon.ico"
     );
 
-    private final List<String> SWAGGER_URL_PATTERNS = List.of(
+    private static final List<String> SWAGGER_URL_PATTERNS = List.of(
             "/gugu-bank/**",
             "/swagger-resources/**",
             "/swagger-ui/**",
@@ -35,6 +35,13 @@ public class WebConfig implements WebMvcConfigurer {
             "/swagger-ui.html"
     );
 
+    private static final String[] EXCLUDE_PATTERN = {
+            "/",
+            "/api/v1/none/login",
+            "/api/v1/none/**",
+            "/gugu-bank/**"
+    };
+
     private final AuthInterceptor authInterceptor;
 
     @Override
@@ -42,6 +49,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(authInterceptor)
                 .excludePathPatterns(JWT_PATTERNS)
                 .excludePathPatterns(SWAGGER_URL_PATTERNS)
+                .excludePathPatterns(EXCLUDE_PATTERN)
                 .addPathPatterns("/**");
     }
 

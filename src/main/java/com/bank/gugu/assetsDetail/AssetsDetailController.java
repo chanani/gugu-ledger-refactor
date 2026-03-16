@@ -27,11 +27,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @Tag(name = "Assets Detail API Controller", description = "자산 상세 정보 관련 API를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
-public class AssetsDetailController implements AssetsDetailControllerDocs{
+public class AssetsDetailController implements AssetsDetailControllerDocs {
 
     private final AssetsDetailService assetsDetailService;
 
