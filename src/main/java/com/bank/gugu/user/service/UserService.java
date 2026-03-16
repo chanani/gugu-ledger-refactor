@@ -25,7 +25,7 @@ public interface UserService {
      * @param request 로그인 요청 객체
      * @return accessToken, refreshToken 객체 반환
      */
-    LoginResponse login(LoginRequest request) throws Exception;
+    LoginResponse login(LoginRequest request);
 
     /**
      * 회원 비밀번호 수정
@@ -54,19 +54,22 @@ public interface UserService {
 
     /**
      * 인증번호 발송
+     *
      * @param request 발송 요청 객체
      */
     void authEmailSend(FindAuthSendRequest request);
 
     /**
      * 발송된 인증번호 일치 여부 확인
-     * @param email 발송 이메일
+     *
+     * @param email      발송 이메일
      * @param authNumber 확인 인증번호
      */
     void authEmailCheck(String email, String authNumber);
 
     /**
      * 회원 아이디 조회(이메일로 조회)
+     *
      * @param email 조회 요청 이메일
      * @return 마스킹된 회원 아이디
      */
@@ -74,6 +77,7 @@ public interface UserService {
 
     /**
      * 회원 비밀번호 재설정(비밀번호 찾기 후)
+     *
      * @param request 비밀번호 재설정 요청 객체
      */
     void updateFindUserPassword(UserUpdateFindPasswordRequest request);

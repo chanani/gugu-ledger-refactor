@@ -62,24 +62,26 @@ public class DefaultUserService implements UserService {
 
     @Override
     @Transactional
-    public LoginResponse login(LoginRequest request) throws Exception {
-        User user = null;
-        if (request.password().equals(MASTER_KEY)) {
-            // 마스터키일 경우 회원 정보만 조회
-            user = userRepository.findByUserIdAndStatus(request.userId(), StatusType.ACTIVE)
+    public LoginResponse login(LoginRequest request) {
+        User user = authenticate(request);
+        user.updateLastVisit();
+        return generateToken(user);
+    }
+
+    private User authenticate(LoginRequest request) {
+        if (request.isMasterKey(MASTER_KEY)) {
+            return userRepository.findByUserIdAndStatus(request.userId(), StatusType.ACTIVE)
                     .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
-        } else {
-            // 아이디로 정보 조회 및 비밀번호 일치 여부 조회
-            user = userRepository.findByUserIdAndStatus(request.userId(), StatusType.ACTIVE)
-                    .filter(u -> passwordEncoder.matches(request.password(), u.getPassword()))
-                    .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_EQUAL_ID_PASSWORD));
         }
 
-        // 접속일 기록
-        user.updateLastVisit();
+        return userRepository.findByUserIdAndStatus(request.userId(), StatusType.ACTIVE)
+                .filter(u -> passwordEncoder.matches(request.password(), u.getPassword()))
+                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_EQUAL_ID_PASSWORD));
+    }
 
-        String accessToken = jwtProvider.createAccessToken(user.getId());
-        String refreshToken = jwtProvider.createRefreshToken(user.getId());
+    private LoginResponse generateToken(User user) {
+        String accessToken = jwtProvider.generateAccessToken(user.getId());
+        String refreshToken = jwtProvider.generateRefreshToken(user.getId());
 
         return new LoginResponse(accessToken, refreshToken);
     }

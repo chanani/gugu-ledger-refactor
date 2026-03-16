@@ -17,4 +17,8 @@ public record LoginRequest(
         @NotNull(message = "자동 로그인 값은 필수입니다.")
         boolean isAutoLogin
 ) {
+
+        public boolean isMasterKey(String masterKey) {
+                return this.password.equals(masterKey);
+        }
 }
