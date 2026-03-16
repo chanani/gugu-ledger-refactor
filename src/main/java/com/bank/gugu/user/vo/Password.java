@@ -2,25 +2,19 @@ package com.bank.gugu.user.vo;
 
 import com.bank.gugu.global.exception.OperationErrorException;
 import com.bank.gugu.global.exception.dto.ErrorCode;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-public record Password(String value) {
+public record Password(String rawValue) {
 
-    private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
-
-    public static Password of(String raw, String rawCheck) {
+    public static Password of(String raw, String rawCheck, PasswordEncoder encoder) {
         validate(raw, rawCheck);
-        return new Password(encode(raw));
+        return new Password(encoder.encode(raw));
     }
 
     private static void validate(String raw, String rawCheck) {
         if (!raw.equals(rawCheck)) {
             throw new OperationErrorException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
-    }
-
-    private static String encode(String raw) {
-        return ENCODER.encode(raw);
     }
 
 }

@@ -49,7 +49,7 @@ public class DefaultUserService implements UserService {
     public void join(JoinRequest request) {
         validateJoinRequest(request);
 
-        User user = userRepository.save(fromJoinRequest(request));
+        User user = userRepository.save(fromJoinRequest(request, passwordEncoder));
         categoryService.addCategories(user);
 
         log.info("join success ! user id = {}", user.getUserId());
