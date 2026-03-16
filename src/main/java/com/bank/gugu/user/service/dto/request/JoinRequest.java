@@ -1,12 +1,9 @@
 package com.bank.gugu.user.service.dto.request;
 
-import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.regex.Regex;
-import com.bank.gugu.user.vo.Password;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 public record JoinRequest(
