@@ -7,11 +7,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserMapper {
 
+    public UserMapper() {}
+
     public static User fromJoinRequest(JoinRequest request, PasswordEncoder encoder) {
         return User.builder()
                 .userId(request.userId())
                 .email(request.email())
-                .password(Password.of(request.password(), request.passwordCheck(), encoder).rawValue())
+                .password(Password.of(request.password(), request.passwordCheck(), encoder).value())
                 .build();
     }
 }
