@@ -1,5 +1,8 @@
 package com.bank.gugu.user.vo;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
 public class MasterKey {
 
     private final String value;
@@ -9,7 +12,10 @@ public class MasterKey {
     }
 
     public boolean matches(String password) {
-        return this.value.equals(password);
+        return MessageDigest.isEqual(
+                this.value.getBytes(StandardCharsets.UTF_8),
+                password.getBytes(StandardCharsets.UTF_8)
+        );
     }
 
 }
