@@ -19,6 +19,7 @@ import com.bank.gugu.global.exception.dto.ErrorCode;
 import com.bank.gugu.global.jwt.JWTProvider;
 import com.bank.gugu.global.redis.RedisProvider;
 import com.bank.gugu.global.utils.MailSendUtil;
+import com.bank.gugu.user.vo.MasterKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,9 +41,8 @@ public class DefaultUserService implements UserService {
     private final JWTProvider jwtProvider;
     private final RedisProvider redisUtil;
     private final MailSendUtil mailSendUtil;
+    private final MasterKey masterKey;
 
-    @Value("${gugu.master-key}")
-    private String MASTER_KEY;
 
     @Override
     @Transactional
@@ -65,11 +65,11 @@ public class DefaultUserService implements UserService {
     public LoginResponse login(LoginRequest request) {
         User user = authenticate(request);
         user.updateLastVisit();
-        return generateToken(user);
+        return createLoginResponse(user);
     }
 
     private User authenticate(LoginRequest request) {
-        if (request.isMasterKey(MASTER_KEY)) {
+        if (masterKey.matches(request.password())) {
             return userRepository.findByUserIdAndStatus(request.userId(), StatusType.ACTIVE)
                     .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
         }
@@ -79,7 +79,7 @@ public class DefaultUserService implements UserService {
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_EQUAL_ID_PASSWORD));
     }
 
-    private LoginResponse generateToken(User user) {
+    private LoginResponse createLoginResponse(User user) {
         String accessToken = jwtProvider.generateAccessToken(user.getId());
         String refreshToken = jwtProvider.generateRefreshToken(user.getId());
 
