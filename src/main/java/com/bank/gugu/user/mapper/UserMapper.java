@@ -2,6 +2,7 @@ package com.bank.gugu.user.mapper;
 
 import com.bank.gugu.user.model.User;
 import com.bank.gugu.user.service.dto.request.JoinRequest;
+import com.bank.gugu.user.service.dto.request.UserUpdateInfoRequest;
 import com.bank.gugu.user.vo.Password;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,6 +15,12 @@ public class UserMapper {
                 .userId(request.userId())
                 .email(request.email())
                 .password(Password.of(request.password(), request.passwordCheck(), encoder).getValue())
+                .build();
+    }
+
+    public static User fromUpdateInfoRequest(UserUpdateInfoRequest request) {
+        return User.builder()
+                .email(request.email())
                 .build();
     }
 }
