@@ -49,7 +49,7 @@ public class User extends BaseEntity {
         this.lastVisit = LocalDateTime.now();
     }
 
-    public boolean hasEmail(){
+    public boolean hasEmail() {
         return this.email != null;
     }
 

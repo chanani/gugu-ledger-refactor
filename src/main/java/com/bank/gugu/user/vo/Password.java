@@ -4,11 +4,13 @@ import com.bank.gugu.global.exception.OperationErrorException;
 import com.bank.gugu.global.exception.dto.ErrorCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Objects;
+
 public class Password {
 
     private final String value;
 
-    public Password(String value) {
+    private Password(String value) {
         this.value = value;
     }
 
@@ -25,5 +27,17 @@ public class Password {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Password password = (Password) o;
+        return Objects.equals(getValue(), password.getValue());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getValue());
     }
 }
