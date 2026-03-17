@@ -1,11 +1,11 @@
 package com.bank.gugu.user.model;
 
 import com.bank.gugu.global.entity.BaseEntity;
+import com.bank.gugu.user.vo.Password;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -35,27 +35,22 @@ public class User extends BaseEntity {
     @Column(name = "last_visit")
     private LocalDateTime lastVisit;
 
-    /**
-     * 비밀번호 변경
-     */
-    public void updatePassword(String password) {
-        this.password = new BCryptPasswordEncoder().encode(password);
+    public void updatePassword(Password password) {
+        this.password = password.getValue();
     }
 
-    /**
-     * 회원 정보 변경
-     */
-    public void updatePInfo(User user) {
-        if (user.email != null) {
+    public void updateInfo(User user) {
+        if (user.hasEmail()) {
             this.email = user.getEmail();
         }
     }
 
-    /**
-     * 마지막 접속 기록 업데이트
-     */
     public void updateLastVisit() {
         this.lastVisit = LocalDateTime.now();
+    }
+
+    public boolean hasEmail() {
+        return this.email != null;
     }
 
 }

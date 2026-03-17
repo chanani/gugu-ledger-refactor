@@ -20,9 +20,9 @@ import com.bank.gugu.global.jwt.JWTProvider;
 import com.bank.gugu.global.redis.RedisProvider;
 import com.bank.gugu.global.utils.MailSendUtil;
 import com.bank.gugu.user.vo.MasterKey;
+import com.bank.gugu.user.vo.Password;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +42,6 @@ public class DefaultUserService implements UserService {
     private final RedisProvider redisUtil;
     private final MailSendUtil mailSendUtil;
     private final MasterKey masterKey;
-
 
     @Override
     @Transactional
@@ -86,14 +85,13 @@ public class DefaultUserService implements UserService {
         return new LoginResponse(accessToken, refreshToken);
     }
 
-
     @Override
     @Transactional
     public void updateUserPassword(UserUpdatePasswordRequest request, User user) {
-        equalPassword(request.password(), request.passwordCheck());
+        Password password = Password.of(request.password(), request.passwordCheck(), passwordEncoder);
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
-        findUser.updatePassword(request.password());
+        findUser.updatePassword(password);
     }
 
     @Override
@@ -109,7 +107,7 @@ public class DefaultUserService implements UserService {
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
         User newEntity = request.toEntity();
-        findUser.updatePInfo(newEntity);
+        findUser.updateInfo(newEntity);
     }
 
     @Override
@@ -149,11 +147,9 @@ public class DefaultUserService implements UserService {
     public void updateFindUserPassword(UserUpdateFindPasswordRequest request) {
         User findUser = userRepository.findByUserIdAndStatus(request.userId(), StatusType.ACTIVE)
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
-
-        equalPassword(request.password(), request.passwordCheck());
-        findUser.updatePassword(request.password());
+        Password password = Password.of(request.password(), request.passwordCheck(), passwordEncoder);
+        findUser.updatePassword(password);
     }
-
 
     /**
      * 회원 아이디 중복 체크(탈퇴한 아이디로 가입 불가)
@@ -164,19 +160,6 @@ public class DefaultUserService implements UserService {
     private void checkUserId(String userId) {
         if (userRepository.existsByUserId(userId)) {
             throw new OperationErrorException(ErrorCode.EXISTS_USER_ID);
-        }
-    }
-
-    /**
-     * 비밀번호 동일 여부 체크
-     * 동일하지 않을 경우 예외 발생
-     *
-     * @param password      비밀번호
-     * @param passwordCheck 확인 비밀번호
-     */
-    private void equalPassword(String password, String passwordCheck) {
-        if (!password.equals(passwordCheck)) {
-            throw new OperationErrorException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
     }
 
