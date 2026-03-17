@@ -43,7 +43,6 @@ public class DefaultUserService implements UserService {
     private final MailSendUtil mailSendUtil;
     private final MasterKey masterKey;
 
-
     @Override
     @Transactional
     public void join(JoinRequest request) {
@@ -85,7 +84,6 @@ public class DefaultUserService implements UserService {
 
         return new LoginResponse(accessToken, refreshToken);
     }
-
 
     @Override
     @Transactional

@@ -4,7 +4,13 @@ import com.bank.gugu.global.exception.OperationErrorException;
 import com.bank.gugu.global.exception.dto.ErrorCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public record Password(String value) {
+public class Password {
+
+    private final String value;
+
+    public Password(String value) {
+        this.value = value;
+    }
 
     public static Password of(String raw, String rawCheck, PasswordEncoder encoder) {
         validate(raw, rawCheck);
@@ -17,4 +23,7 @@ public record Password(String value) {
         }
     }
 
+    public String getValue() {
+        return value;
+    }
 }

@@ -13,7 +13,7 @@ public class UserMapper {
         return User.builder()
                 .userId(request.userId())
                 .email(request.email())
-                .password(Password.of(request.password(), request.passwordCheck(), encoder).value())
+                .password(Password.of(request.password(), request.passwordCheck(), encoder).getValue())
                 .build();
     }
 }

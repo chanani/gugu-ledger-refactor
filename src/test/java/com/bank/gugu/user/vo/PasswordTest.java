@@ -27,9 +27,9 @@ class PasswordTest {
         String rawCheck = "zxc123!@#";
         Password password = Password.of(raw, rawCheck, passwordEncoder);
 
-        assertThat(password.value()).isNotNull();
-        assertThat(password.value()).isNotEqualTo(raw);
-        assertThat(passwordEncoder.matches(raw, password.value())).isTrue();
+        assertThat(password.getValue()).isNotNull();
+        assertThat(password.getValue()).isNotEqualTo(raw);
+        assertThat(passwordEncoder.matches(raw, password.getValue())).isTrue();
     }
 
 }

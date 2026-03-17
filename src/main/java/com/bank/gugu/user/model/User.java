@@ -36,17 +36,21 @@ public class User extends BaseEntity {
     private LocalDateTime lastVisit;
 
     public void updatePassword(Password password) {
-        this.password = password.value();
+        this.password = password.getValue();
     }
 
     public void updateInfo(User user) {
-        if (user.email != null) {
+        if (user.hasEmail()) {
             this.email = user.getEmail();
         }
     }
 
     public void updateLastVisit() {
         this.lastVisit = LocalDateTime.now();
+    }
+
+    public boolean hasEmail(){
+        return this.email != null;
     }
 
 }
