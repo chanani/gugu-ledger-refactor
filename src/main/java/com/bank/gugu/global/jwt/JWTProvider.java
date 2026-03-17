@@ -43,7 +43,7 @@ public class JWTProvider {
     @Value("${jwt.refreshToken-expired-time}")
     private Long refreshTokenExpiredTime;
 
-    public String createAccessToken(Long userId)  {
+    public String generateAccessToken(Long userId)  {
         return Jwts.builder()
                 .claim("id", userId)
                 .claim("roles", Arrays.asList("ROLE_USER"))
@@ -55,7 +55,7 @@ public class JWTProvider {
                 .compact();
     }
 
-    public String createRefreshToken(Long userId) throws Exception {
+    public String generateRefreshToken(Long userId) {
         return Jwts.builder()
                 .claim("userId", userId)
                 .claim("roles", List.of("ROLE_USER"))

@@ -40,7 +40,7 @@ public class UserController implements UserControllerDocs {
 
     @PostMapping("/api/v1/none/login")
     @Override
-    public ResponseEntity<DataResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) throws Exception {
+    public ResponseEntity<DataResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = userService.login(request);
         return ResponseEntity.ok(DataResponse.send(response));
     }
