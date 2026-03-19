@@ -37,11 +37,11 @@ public class DefaultCategoryService implements CategoryService {
     @Override
     @Transactional
     public void addCategories(User user) {
-        List<Category> categories = defaultCategories(user);
+        List<Category> categories = createDefaultCategories(user);
         categoryRepository.saveAll(categories);
     }
 
-    public List<Category> defaultCategories(User user) {
+    private List<Category> createDefaultCategories(User user) {
         Map<String, List<Icon>> icons = iconRepository.findAll().stream()
                 .collect(Collectors.groupingBy(Icon::getName));
 
@@ -59,7 +59,7 @@ public class DefaultCategoryService implements CategoryService {
 
     private Icon findActiveIconOrThrow(Integer iconId) {
         if (iconId == null || iconId == 0) {
-            throw new OperationErrorException(ErrorCode.NOT_FOUND_ICON);
+            return null;
         }
         return iconRepository.findByIdAndStatus(iconId, StatusType.ACTIVE)
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ICON));
