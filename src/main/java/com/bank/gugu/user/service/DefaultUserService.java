@@ -4,7 +4,7 @@ import com.bank.gugu.category.service.CategoryService;
 import com.bank.gugu.common.model.constant.StatusType;
 import com.bank.gugu.user.repository.UserRepository;
 import com.bank.gugu.user.service.dto.request.FindAuthSendRequest;
-import com.bank.gugu.user.service.dto.request.FindUserIdRequest;
+import com.bank.gugu.user.service.dto.request.FindUserIdResponse;
 import com.bank.gugu.user.service.dto.request.JoinRequest;
 import com.bank.gugu.user.service.dto.request.LoginRequest;
 import com.bank.gugu.user.service.dto.request.UserUpdateFindPasswordRequest;
@@ -19,6 +19,7 @@ import com.bank.gugu.global.jwt.JWTProvider;
 import com.bank.gugu.global.redis.RedisProvider;
 import com.bank.gugu.global.utils.MailSendUtil;
 import com.bank.gugu.user.validator.FindAuthValidator;
+import com.bank.gugu.user.validator.FindAuthValidators;
 import com.bank.gugu.user.vo.MasterKey;
 import com.bank.gugu.user.vo.Password;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.bank.gugu.user.mapper.UserMapper.*;
 
@@ -37,7 +36,7 @@ import static com.bank.gugu.user.mapper.UserMapper.*;
 @Slf4j
 public class DefaultUserService implements UserService {
 
-    private final List<FindAuthValidator> validators;
+    private final FindAuthValidators validators;
     private final UserRepository userRepository;
     private final CategoryService categoryService;
     private final PasswordEncoder passwordEncoder;
@@ -113,11 +112,7 @@ public class DefaultUserService implements UserService {
 
     @Override
     public void authEmailSend(FindAuthSendRequest request) {
-        FindAuthValidator validator = validators.stream()
-                .filter(v -> v.supports(request.type()))
-                .findFirst()
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_TYPE));
-
+        FindAuthValidator validator = validators.getValidator(request.type());
         validator.validate(request);
         mailSendUtil.sendEmail(request.email());
     }
@@ -139,10 +134,10 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public FindUserIdRequest findUserId(String email) {
+    public FindUserIdResponse findUserId(String email) {
         User findUser = userRepository.findByEmailAndStatus(email, StatusType.ACTIVE)
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
-        return FindUserIdRequest.from(findUser);
+        return FindUserIdResponse.from(findUser);
     }
 
     @Override
