@@ -1,5 +1,6 @@
 package com.bank.gugu.category.service;
 
+import com.bank.gugu.category.mapper.CategoryMapper;
 import com.bank.gugu.category.repository.CategoryRepository;
 import com.bank.gugu.category.service.constant.DefaultCategories;
 import com.bank.gugu.category.service.dto.request.CategoryCreateRequest;
@@ -50,29 +51,30 @@ public class DefaultCategoryService implements CategoryService {
     @Override
     @Transactional
     public void addCategory(CategoryCreateRequest request, User user) {
-        // 아이콘 전달 했을 경우 아이콘 조회
-        Icon findIcon = null;
-        if (request.icon() != 0 && request.icon() != null) {
-            findIcon = iconRepository.findByIdAndStatus(request.icon(), StatusType.ACTIVE)
-                    .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ICON));
-        }
-        // 카테고리 순서 조회(제일 높은 번호 조회)
-        Integer order = categoryRepository.findTopOrdersByUserAndStatus(user, StatusType.ACTIVE)
-                .orElse(0);
-        // dto -> entity
-        Category newEntity = request.toEntity(user, findIcon, order);
+        Icon findIcon = findActiveIconOrThrow(request.icon());
+        Integer order = findTopOrder(user);
+        Category newEntity = CategoryMapper.fromCreateCategoryRequest(request, user, findIcon, order);
         categoryRepository.save(newEntity);
+    }
+
+    private Icon findActiveIconOrThrow(Integer iconId) {
+        if (iconId == null || iconId == 0) {
+            throw new OperationErrorException(ErrorCode.NOT_FOUND_ICON);
+        }
+        return iconRepository.findByIdAndStatus(iconId, StatusType.ACTIVE)
+                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ICON));
+    }
+
+    private Integer findTopOrder(User user) {
+        return categoryRepository.findTopOrdersByUserAndStatus(user, StatusType.ACTIVE)
+                .orElse(0);
     }
 
     @Override
     @Transactional
     public void updateCategory(Long categoryId, CategoryUpdateRequest request, User user) {
         // 아이콘 전달 했을 경우 아이콘 조회
-        Icon findIcon = null;
-        if (request.icon() != 0 && request.icon() != null) {
-            findIcon = iconRepository.findByIdAndStatus(request.icon(), StatusType.ACTIVE)
-                    .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ICON));
-        }
+        Icon findIcon = findActiveIconOrThrow(request.icon());
         // 카테고리 조회
         Category findCategory = categoryRepository.findByIdAndStatus(categoryId, StatusType.ACTIVE)
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_CATEGORY));
