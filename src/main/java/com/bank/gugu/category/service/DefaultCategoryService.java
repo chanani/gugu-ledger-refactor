@@ -18,7 +18,6 @@ import com.bank.gugu.global.exception.OperationErrorException;
 import com.bank.gugu.global.exception.dto.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,9 +51,9 @@ public class DefaultCategoryService implements CategoryService {
     @Override
     @Transactional
     public void addCategory(CategoryCreateRequest request, User user) {
-        Icon findIcon = findActiveIconOrThrow(request.icon());
+        Icon icon = findActiveIconOrThrow(request.icon());
         Integer order = findTopOrder(user);
-        Category category = CategoryMapper.fromCreateCategoryRequest(request, user, findIcon, order);
+        Category category = CategoryMapper.fromCreateCategoryRequest(request, user, icon, order);
         categoryRepository.save(category);
     }
 
@@ -83,8 +82,8 @@ public class DefaultCategoryService implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(Long categoryId) {
-        Category findCategory = findActiveCategoryOrThrow(categoryId);
-        findCategory.remove();
+        Category category = findActiveCategoryOrThrow(categoryId);
+        category.remove();
     }
 
     @Override
