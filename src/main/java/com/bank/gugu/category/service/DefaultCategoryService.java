@@ -1,6 +1,8 @@
 package com.bank.gugu.category.service;
 
+import com.bank.gugu.category.mapper.CategoryMapper;
 import com.bank.gugu.category.repository.CategoryRepository;
+import com.bank.gugu.category.service.constant.DefaultCategories;
 import com.bank.gugu.category.service.dto.request.CategoryCreateRequest;
 import com.bank.gugu.category.service.dto.request.CategoryUpdateOrderRequest;
 import com.bank.gugu.category.service.dto.request.CategoryUpdateRequest;
@@ -35,36 +37,44 @@ public class DefaultCategoryService implements CategoryService {
     @Override
     @Transactional
     public void addCategories(User user) {
-        List<Category> categories = defaultCategories(user);
+        List<Category> categories = createDefaultCategories(user);
         categoryRepository.saveAll(categories);
+    }
+
+    private List<Category> createDefaultCategories(User user) {
+        Map<String, List<Icon>> icons = iconRepository.findAll().stream()
+                .collect(Collectors.groupingBy(Icon::getName));
+
+        return DefaultCategories.of(user, icons);
     }
 
     @Override
     @Transactional
     public void addCategory(CategoryCreateRequest request, User user) {
-        // 아이콘 전달 했을 경우 아이콘 조회
-        Icon findIcon = null;
-        if (request.icon() != 0 && request.icon() != null) {
-            findIcon = iconRepository.findByIdAndStatus(request.icon(), StatusType.ACTIVE)
-                    .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ICON));
-        }
-        // 카테고리 순서 조회(제일 높은 번호 조회)
-        Integer order = categoryRepository.findTopOrdersByUserAndStatus(user, StatusType.ACTIVE)
-                .orElse(0);
-        // dto -> entity
-        Category newEntity = request.toEntity(user, findIcon, order);
+        Icon findIcon = findActiveIconOrThrow(request.icon());
+        Integer order = findTopOrder(user);
+        Category newEntity = CategoryMapper.fromCreateCategoryRequest(request, user, findIcon, order);
         categoryRepository.save(newEntity);
+    }
+
+    private Icon findActiveIconOrThrow(Integer iconId) {
+        if (iconId == null || iconId == 0) {
+            return null;
+        }
+        return iconRepository.findByIdAndStatus(iconId, StatusType.ACTIVE)
+                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ICON));
+    }
+
+    private Integer findTopOrder(User user) {
+        return categoryRepository.findTopOrdersByUserAndStatus(user, StatusType.ACTIVE)
+                .orElse(0);
     }
 
     @Override
     @Transactional
     public void updateCategory(Long categoryId, CategoryUpdateRequest request, User user) {
         // 아이콘 전달 했을 경우 아이콘 조회
-        Icon findIcon = null;
-        if (request.icon() != 0 && request.icon() != null) {
-            findIcon = iconRepository.findByIdAndStatus(request.icon(), StatusType.ACTIVE)
-                    .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ICON));
-        }
+        Icon findIcon = findActiveIconOrThrow(request.icon());
         // 카테고리 조회
         Category findCategory = categoryRepository.findByIdAndStatus(categoryId, StatusType.ACTIVE)
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_CATEGORY));
@@ -170,33 +180,5 @@ public class DefaultCategoryService implements CategoryService {
         categoryRepository.save(targetCategory);
     }
 
-    /**
-     * 기본 카테고리 목록
-     */
-    public List<Category> defaultCategories(User user) {
-        Map<String, List<Icon>> icons = iconRepository.findAll().stream()
-                .collect(Collectors.groupingBy(Icon::getName));
 
-        return List.of(
-                // 지출
-                new Category(user, RecordType.WITHDRAW, "주거비", 0, icons.get("house").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "식비", 1, icons.get("food").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "교통", 2, icons.get("bus").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "공과금", 3, icons.get("paper").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "의료비", 4, icons.get("hospital").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "여행", 5, icons.get("airplain").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "생필품/마트", 6, icons.get("cart").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "선물/경조사", 7, icons.get("present").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "구독료", 8, icons.get("netflix").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "통신비", 9, icons.get("phone").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "운동", 10, icons.get("health2").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "교육", 11, icons.get("study").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "미용", 12, icons.get("hair").getFirst()),
-                new Category(user, RecordType.WITHDRAW, "의류", 13, icons.get("shirt").getFirst()),
-
-                // 수입
-                new Category(user, RecordType.DEPOSIT, "월급", 14, icons.get("money").getFirst()),
-                new Category(user, RecordType.DEPOSIT, "용돈", 15, icons.get("coin").getFirst())
-        );
-    }
 }
