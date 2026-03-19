@@ -1,6 +1,7 @@
 package com.bank.gugu.user.service;
 
 import com.bank.gugu.category.service.CategoryService;
+import com.bank.gugu.user.mapper.UserMapper;
 import com.bank.gugu.user.service.constant.FindType;
 import com.bank.gugu.common.model.constant.StatusType;
 import com.bank.gugu.user.repository.UserRepository;
@@ -23,10 +24,12 @@ import com.bank.gugu.user.vo.MasterKey;
 import com.bank.gugu.user.vo.Password;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.bank.gugu.user.mapper.UserMapper.*;
 import static com.bank.gugu.user.mapper.UserMapper.fromJoinRequest;
 
 @Service
@@ -96,18 +99,16 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserInfoResponse getInfo(User user) {
-        User findUser = userRepository.findByIdAndStatus(user.getId(), StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
+        User findUser = getUser(user);
         return new UserInfoResponse(findUser);
     }
 
     @Override
     @Transactional
     public void updateUserInfo(UserUpdateInfoRequest request, User user) {
-        User findUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
-        User newEntity = request.toEntity();
-        findUser.updateInfo(newEntity);
+        User findUser = getUser(user);
+        User userInfo = fromUpdateInfoRequest(request);
+        findUser.updateInfo(userInfo);
     }
 
     @Override
@@ -150,6 +151,12 @@ public class DefaultUserService implements UserService {
         Password password = Password.of(request.password(), request.passwordCheck(), passwordEncoder);
         findUser.updatePassword(password);
     }
+
+    private User getUser(User user) {
+        return userRepository.findByIdAndStatus(user.getId(), StatusType.ACTIVE)
+                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
+    }
+
 
     /**
      * 회원 아이디 중복 체크(탈퇴한 아이디로 가입 불가)

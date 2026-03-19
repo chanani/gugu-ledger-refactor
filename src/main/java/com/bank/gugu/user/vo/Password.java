@@ -6,7 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Objects;
 
-public class Password {
+public final class Password {
 
     private final String value;
 
