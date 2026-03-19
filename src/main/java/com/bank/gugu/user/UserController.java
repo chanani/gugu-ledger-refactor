@@ -4,7 +4,7 @@ import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.user.repository.UserRepository;
 import com.bank.gugu.user.service.UserService;
 import com.bank.gugu.user.service.dto.request.FindAuthSendRequest;
-import com.bank.gugu.user.service.dto.request.FindUserIdRequest;
+import com.bank.gugu.user.service.dto.response.FindUserIdResponse;
 import com.bank.gugu.user.service.dto.request.JoinRequest;
 import com.bank.gugu.user.service.dto.request.LoginRequest;
 import com.bank.gugu.user.service.dto.request.UserUpdateFindPasswordRequest;
@@ -104,9 +104,9 @@ public class UserController implements UserControllerDocs {
 
     @GetMapping("/api/v1/none/find-id")
     @Override
-    public ResponseEntity<DataResponse<FindUserIdRequest>> getUserId(
+    public ResponseEntity<DataResponse<FindUserIdResponse>> getUserId(
             @RequestParam(name = "email") String email) {
-        FindUserIdRequest response = userService.findUserId(email);
+        FindUserIdResponse response = userService.findUserId(email);
         return ResponseEntity.ok(DataResponse.send(response));
     }
 

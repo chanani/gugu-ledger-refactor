@@ -1,12 +1,10 @@
 package com.bank.gugu.user.service;
 
 import com.bank.gugu.category.service.CategoryService;
-import com.bank.gugu.user.mapper.UserMapper;
-import com.bank.gugu.user.service.constant.FindType;
 import com.bank.gugu.common.model.constant.StatusType;
 import com.bank.gugu.user.repository.UserRepository;
 import com.bank.gugu.user.service.dto.request.FindAuthSendRequest;
-import com.bank.gugu.user.service.dto.request.FindUserIdRequest;
+import com.bank.gugu.user.service.dto.response.FindUserIdResponse;
 import com.bank.gugu.user.service.dto.request.JoinRequest;
 import com.bank.gugu.user.service.dto.request.LoginRequest;
 import com.bank.gugu.user.service.dto.request.UserUpdateFindPasswordRequest;
@@ -20,17 +18,17 @@ import com.bank.gugu.global.exception.dto.ErrorCode;
 import com.bank.gugu.global.jwt.JWTProvider;
 import com.bank.gugu.global.redis.RedisProvider;
 import com.bank.gugu.global.utils.MailSendUtil;
+import com.bank.gugu.user.validator.FindAuthValidator;
+import com.bank.gugu.user.validator.FindAuthValidators;
 import com.bank.gugu.user.vo.MasterKey;
 import com.bank.gugu.user.vo.Password;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.bank.gugu.user.mapper.UserMapper.*;
-import static com.bank.gugu.user.mapper.UserMapper.fromJoinRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +36,7 @@ import static com.bank.gugu.user.mapper.UserMapper.fromJoinRequest;
 @Slf4j
 public class DefaultUserService implements UserService {
 
+    private final FindAuthValidators validators;
     private final UserRepository userRepository;
     private final CategoryService categoryService;
     private final PasswordEncoder passwordEncoder;
@@ -58,8 +57,8 @@ public class DefaultUserService implements UserService {
     }
 
     private void validateJoinRequest(JoinRequest request) {
-        checkUserId(request.userId());
-        checkEmail(request.email());
+        validateUserId(request.userId());
+        validateEmail(request.email());
     }
 
     @Override
@@ -99,48 +98,46 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserInfoResponse getInfo(User user) {
-        User findUser = getUser(user);
+        User findUser = findActiveUserOrThrow(user);
         return new UserInfoResponse(findUser);
     }
 
     @Override
     @Transactional
     public void updateUserInfo(UserUpdateInfoRequest request, User user) {
-        User findUser = getUser(user);
+        User findUser = findActiveUserOrThrow(user);
         User userInfo = fromUpdateInfoRequest(request);
         findUser.updateInfo(userInfo);
     }
 
     @Override
     public void authEmailSend(FindAuthSendRequest request) {
-        if (request.type().equals(FindType.ID)) {
-            // 존재하는 이메일인지 체크
-            if (!userRepository.existsByEmailAndStatus(request.email(), StatusType.ACTIVE)) {
-                throw new OperationErrorException(ErrorCode.NOT_FOUND_EMAIL);
-            }
-        } else if (request.type().equals(FindType.PASSWORD)) {
-            // 존재하는 아이디, 이메일인지 체크
-            if (!userRepository.existsByUserIdAndEmailAndStatus(request.userId(), request.email(), StatusType.ACTIVE)) {
-                throw new OperationErrorException(ErrorCode.NOT_FOUND_USERID_EMAIL);
-            }
-        }
-
+        FindAuthValidator validator = validators.getValidator(request.type());
+        validator.validate(request);
         mailSendUtil.sendEmail(request.email());
     }
 
     @Override
     public void authEmailCheck(String email, String authNumber) {
         String code = redisUtil.getData(email);
-        if (code == null || !code.equals(authNumber)) {
+        validateAuthNumber(authNumber, code);
+    }
+
+    private void validateAuthNumber(String authNumber, String code) {
+        if (isInvalidAuthCode(authNumber, code)) {
             throw new OperationErrorException(ErrorCode.NOT_EQUALS_AUTH_NUMBER);
         }
     }
 
+    private boolean isInvalidAuthCode(String authNumber, String code) {
+        return code == null || !code.equals(authNumber);
+    }
+
     @Override
-    public FindUserIdRequest findUserId(String email) {
+    public FindUserIdResponse findUserId(String email) {
         User findUser = userRepository.findByEmailAndStatus(email, StatusType.ACTIVE)
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
-        return new FindUserIdRequest(findUser);
+        return FindUserIdResponse.from(findUser);
     }
 
     @Override
@@ -152,11 +149,10 @@ public class DefaultUserService implements UserService {
         findUser.updatePassword(password);
     }
 
-    private User getUser(User user) {
+    private User findActiveUserOrThrow(User user) {
         return userRepository.findByIdAndStatus(user.getId(), StatusType.ACTIVE)
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_USER));
     }
-
 
     /**
      * 회원 아이디 중복 체크(탈퇴한 아이디로 가입 불가)
@@ -164,7 +160,7 @@ public class DefaultUserService implements UserService {
      *
      * @param userId 회원 아이디
      */
-    private void checkUserId(String userId) {
+    private void validateUserId(String userId) {
         if (userRepository.existsByUserId(userId)) {
             throw new OperationErrorException(ErrorCode.EXISTS_USER_ID);
         }
@@ -175,7 +171,7 @@ public class DefaultUserService implements UserService {
      *
      * @param email 회원 이메일
      */
-    private void checkEmail(String email) {
+    private void validateEmail(String email) {
         if (userRepository.existsByEmailAndStatus(email, StatusType.ACTIVE)) {
             throw new OperationErrorException(ErrorCode.EXISTS_EMAIL);
         }

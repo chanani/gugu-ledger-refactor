@@ -60,6 +60,7 @@ public enum ErrorCode {
     NOT_EQUAL_PASSWORD(1104, HttpStatus.BAD_REQUEST, "두 비밀번호가 일치하지 않습니다."),
     NOT_FOUND_EMAIL(1105, HttpStatus.BAD_REQUEST, "잘못된 이메일입니다. 다시 확인해주세요."),
     NOT_FOUND_USERID_EMAIL(1106, HttpStatus.BAD_REQUEST, "아아디 또는 이메일을 다시 확인해주세요."),
+    NOT_FOUND_TYPE(1107, HttpStatus.BAD_REQUEST, "지원하지 않는 타입입니다."),
 
     // 1150 ~ 1199 아이콘 관련 예외
     NOT_FOUND_ICON(1150, HttpStatus.FORBIDDEN, "찾을 수 없는 아이콘입니다."),

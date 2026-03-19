@@ -1,7 +1,7 @@
 package com.bank.gugu.user.service;
 
 import com.bank.gugu.user.service.dto.request.FindAuthSendRequest;
-import com.bank.gugu.user.service.dto.request.FindUserIdRequest;
+import com.bank.gugu.user.service.dto.response.FindUserIdResponse;
 import com.bank.gugu.user.service.dto.request.JoinRequest;
 import com.bank.gugu.user.service.dto.request.LoginRequest;
 import com.bank.gugu.user.service.dto.request.UserUpdateFindPasswordRequest;
@@ -73,7 +73,7 @@ public interface UserService {
      * @param email 조회 요청 이메일
      * @return 마스킹된 회원 아이디
      */
-    FindUserIdRequest findUserId(String email);
+    FindUserIdResponse findUserId(String email);
 
     /**
      * 회원 비밀번호 재설정(비밀번호 찾기 후)
