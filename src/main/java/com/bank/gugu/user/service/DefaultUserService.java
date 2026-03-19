@@ -1,7 +1,6 @@
 package com.bank.gugu.user.service;
 
 import com.bank.gugu.category.service.CategoryService;
-import com.bank.gugu.user.service.constant.FindType;
 import com.bank.gugu.common.model.constant.StatusType;
 import com.bank.gugu.user.repository.UserRepository;
 import com.bank.gugu.user.service.dto.request.FindAuthSendRequest;
@@ -130,12 +129,12 @@ public class DefaultUserService implements UserService {
     }
 
     private void validateAuthNumber(String authNumber, String code) {
-        if (isCode(authNumber, code)) {
+        if (isInvalidAuthCode(authNumber, code)) {
             throw new OperationErrorException(ErrorCode.NOT_EQUALS_AUTH_NUMBER);
         }
     }
 
-    private boolean isCode(String authNumber, String code) {
+    private boolean isInvalidAuthCode(String authNumber, String code) {
         return code == null || !code.equals(authNumber);
     }
 

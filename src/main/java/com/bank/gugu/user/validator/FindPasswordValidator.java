@@ -6,17 +6,14 @@ import com.bank.gugu.global.exception.dto.ErrorCode;
 import com.bank.gugu.user.repository.UserRepository;
 import com.bank.gugu.user.service.constant.FindType;
 import com.bank.gugu.user.service.dto.request.FindAuthSendRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class FindPasswordValidator implements FindAuthValidator {
 
     private final UserRepository userRepository;
-
-    public FindPasswordValidator(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
 
     @Override
     public boolean supports(FindType type) {

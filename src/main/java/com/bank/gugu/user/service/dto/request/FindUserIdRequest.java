@@ -8,11 +8,11 @@ public record FindUserIdRequest(
         String userId
 ) {
 
-    public static FindUserIdRequest from (User user) {
+    public static FindUserIdRequest from(User user) {
         return new FindUserIdRequest(
                 user.getUserId()
-                .substring(0, user.getUserId().length() - 3)
-                .concat("***")
+                        .substring(0, user.getUserId().length() - 3)
+                        .concat("***")
         );
     }
 }
