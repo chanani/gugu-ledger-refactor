@@ -4,7 +4,7 @@ import com.bank.gugu.category.service.CategoryService;
 import com.bank.gugu.common.model.constant.StatusType;
 import com.bank.gugu.user.repository.UserRepository;
 import com.bank.gugu.user.service.dto.request.FindAuthSendRequest;
-import com.bank.gugu.user.service.dto.request.FindUserIdResponse;
+import com.bank.gugu.user.service.dto.response.FindUserIdResponse;
 import com.bank.gugu.user.service.dto.request.JoinRequest;
 import com.bank.gugu.user.service.dto.request.LoginRequest;
 import com.bank.gugu.user.service.dto.request.UserUpdateFindPasswordRequest;

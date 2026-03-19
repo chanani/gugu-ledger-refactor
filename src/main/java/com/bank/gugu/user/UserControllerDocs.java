@@ -4,7 +4,7 @@ import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
 import com.bank.gugu.user.model.User;
 import com.bank.gugu.user.service.dto.request.FindAuthSendRequest;
-import com.bank.gugu.user.service.dto.request.FindUserIdResponse;
+import com.bank.gugu.user.service.dto.response.FindUserIdResponse;
 import com.bank.gugu.user.service.dto.request.JoinRequest;
 import com.bank.gugu.user.service.dto.request.LoginRequest;
 import com.bank.gugu.user.service.dto.request.UserUpdateFindPasswordRequest;

@@ -1,4 +1,4 @@
-package com.bank.gugu.user.service.dto.request;
+package com.bank.gugu.user.service.dto.response;
 
 import com.bank.gugu.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,10 +9,9 @@ public record FindUserIdResponse(
 ) {
 
     public static FindUserIdResponse from(User user) {
+        String userId = user.getUserId();
         return new FindUserIdResponse(
-                user.getUserId()
-                        .substring(0, user.getUserId().length() - 3)
-                        .concat("***")
+                userId.substring(0, userId.length() - 3).concat("***")
         );
     }
 }

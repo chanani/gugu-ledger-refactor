@@ -1,7 +1,7 @@
 package com.bank.gugu.user.service;
 
 import com.bank.gugu.user.service.dto.request.FindAuthSendRequest;
-import com.bank.gugu.user.service.dto.request.FindUserIdResponse;
+import com.bank.gugu.user.service.dto.response.FindUserIdResponse;
 import com.bank.gugu.user.service.dto.request.JoinRequest;
 import com.bank.gugu.user.service.dto.request.LoginRequest;
 import com.bank.gugu.user.service.dto.request.UserUpdateFindPasswordRequest;

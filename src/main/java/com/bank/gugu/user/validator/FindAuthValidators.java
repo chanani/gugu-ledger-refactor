@@ -16,7 +16,7 @@ public class FindAuthValidators {
 
     public FindAuthValidator getValidator(FindType type) {
         return validators.stream()
-                .filter(v -> v.supports(type))
+                .filter(validate -> validate.supports(type))
                 .findFirst()
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_TYPE));
     }
