@@ -1,5 +1,6 @@
 package com.bank.gugu.assets.service;
 
+import com.bank.gugu.assets.mapper.AssetsMapper;
 import com.bank.gugu.assets.repository.AssetsRepository;
 import com.bank.gugu.assets.service.request.AssetsCreateRequest;
 import com.bank.gugu.assets.service.request.AssetsUpdateRequest;
@@ -29,8 +30,8 @@ public class DefaultAssetsService implements AssetsService {
     @Override
     @Transactional
     public void addAssets(AssetsCreateRequest request, User user) {
-        Assets newEntity = request.toEntity(user);
-        assetsRepository.save(newEntity);
+        Assets assets = AssetsMapper.fromCreateRequest(request, user);
+        assetsRepository.save(assets);
     }
 
     @Override
