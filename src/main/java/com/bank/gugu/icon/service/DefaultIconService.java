@@ -21,7 +21,7 @@ public class DefaultIconService implements IconService {
     @Override
     public List<IconsResponse> getIcons() {
         return iconRepository.findAllByStatus(StatusType.ACTIVE).stream()
-                .map(IconsResponse::new)
+                .map(IconsResponse::from)
                 .toList();
     }
 }
