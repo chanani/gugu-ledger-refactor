@@ -32,7 +32,7 @@ public class CategoryController implements CategoryControllerDocs {
     @Override
     public ResponseEntity<ApiResponse> addCategory(
             @Valid @RequestBody CategoryCreateRequest request,
-            @AuthUser User user
+            @AuthUser @Parameter(hidden = true) User user
     ) {
         categoryService.addCategory(request, user);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -51,8 +51,11 @@ public class CategoryController implements CategoryControllerDocs {
 
     @DeleteMapping("/api/v1/user/categories/{categoryId}")
     @Override
-    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable(name = "categoryId") Long categoryId) {
-        categoryService.deleteCategory(categoryId);
+    public ResponseEntity<ApiResponse> deleteCategory(
+            @PathVariable(name = "categoryId") Long categoryId,
+            @AuthUser @Parameter(hidden = true) User user
+    ) {
+        categoryService.deleteCategory(categoryId, user);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 

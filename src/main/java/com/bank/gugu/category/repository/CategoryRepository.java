@@ -26,4 +26,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Integer> findTopOrdersByUserAndStatus(@Param("user") User user, @Param("status") StatusType status);
 
     List<Category> findAllByUserIdAndStatus(Long id, StatusType statusType);
+
+    Optional<Category> findByIdAndUserIdAndStatus(Long categoryId, Long id, StatusType statusType);
 }

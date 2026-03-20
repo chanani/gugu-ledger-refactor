@@ -81,8 +81,9 @@ public class DefaultCategoryService implements CategoryService {
 
     @Override
     @Transactional
-    public void deleteCategory(Long categoryId) {
-        Category category = findActiveCategoryOrThrow(categoryId);
+    public void deleteCategory(Long categoryId, User user) {
+        Category category = categoryRepository.findByIdAndUserIdAndStatus(categoryId, user.getId(), StatusType.ACTIVE)
+                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_CATEGORY));
         category.remove();
     }
 

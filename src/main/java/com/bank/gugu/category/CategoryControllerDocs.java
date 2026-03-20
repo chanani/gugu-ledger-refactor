@@ -77,7 +77,10 @@ public interface CategoryControllerDocs {
                     content = @Content(schema = @Schema(implementation = ApiResponse.class))
             )}
     )
-    ResponseEntity<ApiResponse> deleteCategory(Long categoryId);
+    ResponseEntity<ApiResponse> deleteCategory(
+            Long categoryId,
+            @Parameter(hidden = true) User user
+    );
 
     @Operation(
             summary = "카테고리 목록 조회",
