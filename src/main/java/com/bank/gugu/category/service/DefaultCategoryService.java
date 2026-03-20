@@ -73,9 +73,9 @@ public class DefaultCategoryService implements CategoryService {
     @Override
     @Transactional
     public void updateCategory(Long categoryId, CategoryUpdateRequest request, User user) {
-        Icon findIcon = findActiveIconOrThrow(request.icon());
+        Icon icon = findActiveIconOrThrow(request.icon());
         Category findCategory = findActiveCategoryOrThrow(categoryId);
-        Category category = CategoryMapper.fromUpdateCategoryRequest(request, user, findIcon);
+        Category category = CategoryMapper.fromUpdateCategoryRequest(request, user, icon);
         findCategory.update(category);
     }
 
