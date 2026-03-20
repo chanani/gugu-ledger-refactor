@@ -39,8 +39,9 @@ public interface CategoryService {
     /**
      * 카테고리 삭제
      * @param categoryId 카테고리 식별자
+     * @param user 로그인 회원 객체
      */
-    void deleteCategory(Long categoryId);
+    void deleteCategory(Long categoryId, User user);
 
     /**
      * 카테고리 목록 조회

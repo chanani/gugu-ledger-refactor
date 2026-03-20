@@ -32,7 +32,7 @@ public class CategoryController implements CategoryControllerDocs {
     @Override
     public ResponseEntity<ApiResponse> addCategory(
             @Valid @RequestBody CategoryCreateRequest request,
-            @AuthUser User user
+            @AuthUser @Parameter(hidden = true) User user
     ) {
         categoryService.addCategory(request, user);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -51,15 +51,18 @@ public class CategoryController implements CategoryControllerDocs {
 
     @DeleteMapping("/api/v1/user/categories/{categoryId}")
     @Override
-    public ResponseEntity<ApiResponse> updateCategory(@PathVariable(name = "categoryId") Long categoryId) {
-        categoryService.deleteCategory(categoryId);
+    public ResponseEntity<ApiResponse> deleteCategory(
+            @PathVariable(name = "categoryId") Long categoryId,
+            @AuthUser @Parameter(hidden = true) User user
+    ) {
+        categoryService.deleteCategory(categoryId, user);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @GetMapping("/api/v1/user/categories")
     @Override
     public ResponseEntity<DataResponse<List<CategoriesResponse>>> getCategories(
-            @Parameter(hidden = true) User user,
+            @AuthUser @Parameter(hidden = true) User user,
             @Parameter(name = "type") RecordType type
     ) {
         List<CategoriesResponse> categories = categoryService.getCategories(user, type);
@@ -80,8 +83,8 @@ public class CategoryController implements CategoryControllerDocs {
             description = "카테고리 순서를 변경합니다.")
     @PutMapping("/api/v1/user/categories-order")
     public ResponseEntity<ApiResponse> updateCategoryOrder(
-            @Valid @RequestBody List<CategoryUpdateOrderRequest> request,
-            @Parameter(hidden = true) User user
+            @RequestBody List<CategoryUpdateOrderRequest> request,
+            @AuthUser @Parameter(hidden = true) User user
     ) {
         categoryService.updateOrder(request, user);
         return ResponseEntity.ok(ApiResponse.ok());

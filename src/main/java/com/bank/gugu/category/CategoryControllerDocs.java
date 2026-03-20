@@ -1,6 +1,5 @@
 package com.bank.gugu.category;
 
-import com.bank.gugu.assetsDetail.service.response.AssetsDetailResponse;
 import com.bank.gugu.category.service.dto.request.CategoryCreateRequest;
 import com.bank.gugu.category.service.dto.request.CategoryUpdateOrderRequest;
 import com.bank.gugu.category.service.dto.request.CategoryUpdateRequest;
@@ -78,7 +77,10 @@ public interface CategoryControllerDocs {
                     content = @Content(schema = @Schema(implementation = ApiResponse.class))
             )}
     )
-    ResponseEntity<ApiResponse> updateCategory(Long categoryId);
+    ResponseEntity<ApiResponse> deleteCategory(
+            Long categoryId,
+            @Parameter(hidden = true) User user
+    );
 
     @Operation(
             summary = "카테고리 목록 조회",

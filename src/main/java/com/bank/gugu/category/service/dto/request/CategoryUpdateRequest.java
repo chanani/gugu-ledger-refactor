@@ -20,13 +20,4 @@ public record CategoryUpdateRequest(
         @Schema(description = "아이콘")
         Integer icon
 ) {
-
-        public Category toEntity(User user, Icon icon) {
-                return Category.builder()
-                        .user(user)
-                        .type(this.type)
-                        .icon(icon)
-                        .name(this.name)
-                        .build();
-        }
 }
