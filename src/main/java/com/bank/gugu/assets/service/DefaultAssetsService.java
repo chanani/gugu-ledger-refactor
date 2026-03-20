@@ -14,6 +14,7 @@ import com.bank.gugu.global.exception.OperationErrorException;
 import com.bank.gugu.global.exception.dto.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,23 +38,16 @@ public class DefaultAssetsService implements AssetsService {
     @Override
     @Transactional
     public void updateAssets(AssetsUpdateRequest request, Long assetsId) {
-        // 자산 그룹 조회
-        Assets findAssets = assetsRepository.findByIdAndStatus(assetsId, StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
-        // dto -> entity
-        Assets newEntity = request.toEntity();
-        // 수정
-        findAssets.update(newEntity);
+        Assets findAssets = findAssetsOrThrow(assetsId);
+        Assets assets = AssetsMapper.fromUpdateRequest(request);
+        findAssets.update(assets);
     }
 
     @Override
     @Transactional
     public void deleteAssets(Long assetsId) {
-        // 자산 그룹 조회
-        Assets findAssets = assetsRepository.findByIdAndStatus(assetsId, StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
-        // 소프트 삭제
-        findAssets.remove();
+        Assets assets = findAssetsOrThrow(assetsId);
+        assets.remove();
     }
 
     @Override
@@ -72,8 +66,12 @@ public class DefaultAssetsService implements AssetsService {
 
     @Override
     public AssetsResponse getAssets(Long assetsId) {
-        Assets findAssets = assetsRepository.findByIdAndStatus(assetsId, StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
+        Assets findAssets = findAssetsOrThrow(assetsId);
         return new AssetsResponse(findAssets);
+    }
+
+    private Assets findAssetsOrThrow(Long assetsId) {
+        return assetsRepository.findByIdAndStatus(assetsId, StatusType.ACTIVE)
+                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
     }
 }

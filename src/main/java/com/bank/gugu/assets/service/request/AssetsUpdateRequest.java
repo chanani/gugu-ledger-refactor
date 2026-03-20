@@ -1,7 +1,5 @@
 package com.bank.gugu.assets.service.request;
 
-import com.bank.gugu.assets.model.Assets;
-import com.bank.gugu.common.model.constant.BooleanYn;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record AssetsUpdateRequest(
@@ -15,11 +13,4 @@ public record AssetsUpdateRequest(
         boolean totalActive
 ) {
 
-    public Assets toEntity(){
-        return Assets.builder()
-                .name(this.name)
-                .color(this.color)
-                .totalActive(totalActive ? BooleanYn.Y : BooleanYn.N)
-                .build();
-    }
 }
