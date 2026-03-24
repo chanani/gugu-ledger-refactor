@@ -9,6 +9,7 @@ import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class AssetsController implements AssetsControllerDocs {
 
     @GetMapping("/api/v1/user/assets")
     @Override
-    public ResponseEntity<DataResponse<AssetsSummaryResponse>> getAssets(@AuthUser User user) {
+    public ResponseEntity<DataResponse<AssetsSummaryResponse>> getAssets(@AuthUser @Parameter(hidden = true) User user) {
         AssetsSummaryResponse assets = assetsService.getAssetsList(user);
         return ResponseEntity.ok(DataResponse.send(assets));
     }

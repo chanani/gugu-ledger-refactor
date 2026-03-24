@@ -55,11 +55,11 @@ public class DefaultAssetsService implements AssetsService {
                 .map(AssetsResponse::new)
                 .toList();
 
-        int totalAssets = calculateTotalAsserts(assetsDto);
+        int totalAssets = calculateTotalAssets(assetsDto);
         return new AssetsSummaryResponse(totalAssets, assetsDto);
     }
 
-    private static int calculateTotalAsserts(List<AssetsResponse> findAssets) {
+    private static int calculateTotalAssets(List<AssetsResponse> findAssets) {
         return findAssets.stream()
                 .filter(dto -> dto.totalActive().equals(BooleanYn.Y))
                 .mapToInt(AssetsResponse::balance).sum();
