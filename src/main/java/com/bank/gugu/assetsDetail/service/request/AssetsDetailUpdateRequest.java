@@ -35,30 +35,7 @@ public record AssetsDetailUpdateRequest(
         PriceType priceType
 ) {
 
-    public AssetsDetail toEntity(Assets assets, AssetsDetail currentAssetsDetail, Category category) {
-        return AssetsDetail.builder()
-                .category(category)
-                .assets(assets)
-                .type(this.type)
-                .priceType(this.priceType)
-                .price(this.type.equals(RecordType.DEPOSIT) ? this.price : -this.price)
-                .balance(currentAssetsDetail.getBalance() - currentAssetsDetail.getPrice() +
-                        (this.type.equals(RecordType.DEPOSIT) ?
-                                this.price : -this.price))
-                .useDate(LocalDate.parse(this.useDate))
-                .active(this.active ? BooleanYn.Y : BooleanYn.N)
-                .memo(this.memo)
-                .build();
-    }
-
-    public Records toRecordsEntity(Category category) {
-        return Records.builder()
-                .type(this.type)
-                .price(this.type.equals(RecordType.DEPOSIT) ? this.price : -this.price)
-                .priceType(this.priceType)
-                .category(category)
-                .useDate(LocalDate.parse(this.useDate))
-                .memo(this.memo)
-                .build();
+    public boolean isType(RecordType type) {
+        return this.type.equals(type);
     }
 }

@@ -4,49 +4,41 @@ import com.bank.gugu.assetsDetail.model.AssetsDetail;
 import com.bank.gugu.common.model.constant.BooleanYn;
 import com.bank.gugu.common.model.constant.PriceType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
 
 import java.time.LocalDate;
 
-@Getter
-public class AssetsDetailResponse {
+public record AssetsDetailResponse(
+        @Schema(description = "자산 상세정보 ID")
+        Long id,
+        @Schema(description = "타입")
+        String type,
+        @Schema(description = "금액")
+        Integer price,
+        @Schema(description = "변경 후 잔액")
+        Integer balance,
+        @Schema(description = "날짜")
+        LocalDate useDate,
+        @Schema(description = "메모")
+        String memo,
+        @Schema(description = "활성화 여부")
+        boolean active,
+        @Schema(description = "결제 유형")
+        PriceType priceType,
+        @Schema(description = "카테고리 ID")
+        Long categoryId
+) {
 
-    @Schema(description = "자산 상세정보 ID")
-    private Long id;
-
-    @Schema(description = "타입")
-    private String type;
-
-    @Schema(description = "금액")
-    private Integer price;
-
-    @Schema(description = "변경 후 잔액")
-    private Integer balance;
-
-    @Schema(description = "날짜")
-    private LocalDate useDate;
-
-    @Schema(description = "메모")
-    private String memo;
-
-    @Schema(description = "활성화 여부")
-    private boolean active;
-
-    @Schema(description = "결제 유형")
-    private PriceType priceType;
-
-    @Schema(description = "카테고리 ID")
-    private Long categoryId;
-
-    public AssetsDetailResponse(AssetsDetail assetsDetail) {
-        this.id = assetsDetail.getId();
-        this.type = String.valueOf(assetsDetail.getType());
-        this.price = assetsDetail.getPrice();
-        this.balance = assetsDetail.getBalance();
-        this.useDate = assetsDetail.getUseDate();
-        this.memo = assetsDetail.getMemo();
-        this.active = assetsDetail.getActive().equals(BooleanYn.Y);
-        this.priceType = assetsDetail.getPriceType();
-        this.categoryId = assetsDetail.getCategory().getId();
+    public static AssetsDetailResponse from(AssetsDetail assetsDetail) {
+        return new AssetsDetailResponse(
+                assetsDetail.getId(),
+                String.valueOf(assetsDetail.getType()),
+                assetsDetail.getPrice(),
+                assetsDetail.getBalance(),
+                assetsDetail.getUseDate(),
+                assetsDetail.getMemo(),
+                assetsDetail.isActiveY(),
+                assetsDetail.getPriceType(),
+                assetsDetail.getCategory().getId()
+        );
     }
 }

@@ -38,7 +38,7 @@ public class AssetsDetailController implements AssetsDetailControllerDocs {
     @Override
     public ResponseEntity<ApiResponse> addAssetsDetail(
             @Valid @RequestBody AssetsDetailCreateRequest request,
-            @AuthUser User user
+            @AuthUser @Parameter(hidden = true) User user
     ) {
         assetsDetailService.addAssetsDetail(request, user);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -49,7 +49,7 @@ public class AssetsDetailController implements AssetsDetailControllerDocs {
     public ResponseEntity<ApiResponse> updateAssetsDetail(
             @PathVariable(name = "assetsDetailId") Long assetsDetailId,
             @Valid @RequestBody AssetsDetailUpdateRequest request,
-            @AuthUser User user
+            @AuthUser @Parameter(hidden = true) User user
     ) {
         assetsDetailService.updateAssetsDetail(assetsDetailId, request, user);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -65,7 +65,7 @@ public class AssetsDetailController implements AssetsDetailControllerDocs {
     @GetMapping("/api/v1/user/assets-details")
     @Override
     public ResponseEntity<DataResponse<AssetsDetailsTotalResponse>> getAssetsDetails(
-            @Parameter(hidden = true) User user,
+            @AuthUser @Parameter(hidden = true) User user,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             @ParameterObject @ModelAttribute AssetsDetailsInput input
@@ -77,7 +77,9 @@ public class AssetsDetailController implements AssetsDetailControllerDocs {
 
     @GetMapping("/api/v1/user/assets-details/{assetsDetailId}")
     @Override
-    public ResponseEntity<DataResponse<AssetsDetailResponse>> getAssetsDetail(@PathVariable(name = "assetsDetailId") Long assetsDetailId) {
+    public ResponseEntity<DataResponse<AssetsDetailResponse>> getAssetsDetail(
+            @PathVariable(name = "assetsDetailId") Long assetsDetailId
+    ) {
         AssetsDetailResponse assetsDetails = assetsDetailService.getAssetsDetail(assetsDetailId);
         return ResponseEntity.ok(DataResponse.send(assetsDetails));
     }

@@ -47,33 +47,8 @@ public record AssetsDetailCreateRequest(
         String memo
 ) {
 
-    public AssetsDetail toEntity(User user, Assets assets, Category category) {
-        return AssetsDetail.builder()
-                .user(user)
-                .assets(assets)
-                .category(category)
-                .type(this.type)
-                .priceType(this.priceType)
-                .price(this.type.equals(RecordType.DEPOSIT) ? this.price : -this.price)
-                .balance(this.type.equals(RecordType.DEPOSIT) ?
-                        assets.getBalance() + price :
-                        assets.getBalance() - price)
-                .useDate(LocalDate.parse(this.useDate))
-                .active(this.active ? BooleanYn.Y : BooleanYn.N)
-                .memo(this.memo)
-                .build();
+    public boolean isType(RecordType type) {
+        return this.type.equals(type);
     }
 
-    public Records toRecordEntity(User user, Assets  assets, Category category) {
-        return Records.builder()
-                .user(user)
-                .category(category)
-                .assets(assets)
-                .type(this.type)
-                .price(price)
-                .priceType(this.priceType)
-                .memo(this.memo)
-                .useDate(LocalDate.parse(this.useDate))
-                .build();
-    }
 }
