@@ -3,12 +3,13 @@ package com.bank.gugu.assets;
 import com.bank.gugu.assets.service.AssetsService;
 import com.bank.gugu.assets.service.request.AssetsCreateRequest;
 import com.bank.gugu.assets.service.request.AssetsUpdateRequest;
-import com.bank.gugu.assets.service.response.AssetsPageResponse;
+import com.bank.gugu.assets.service.response.AssetsSummaryResponse;
 import com.bank.gugu.assets.service.response.AssetsResponse;
 import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,8 +52,8 @@ public class AssetsController implements AssetsControllerDocs {
 
     @GetMapping("/api/v1/user/assets")
     @Override
-    public ResponseEntity<DataResponse<AssetsPageResponse>> getAssets(@AuthUser User user) {
-        AssetsPageResponse assets = assetsService.getAssetsList(user);
+    public ResponseEntity<DataResponse<AssetsSummaryResponse>> getAssets(@AuthUser @Parameter(hidden = true) User user) {
+        AssetsSummaryResponse assets = assetsService.getAssetsList(user);
         return ResponseEntity.ok(DataResponse.send(assets));
     }
 

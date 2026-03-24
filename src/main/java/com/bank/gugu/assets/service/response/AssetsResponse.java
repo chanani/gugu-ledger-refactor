@@ -3,35 +3,29 @@ package com.bank.gugu.assets.service.response;
 import com.bank.gugu.assets.model.Assets;
 import com.bank.gugu.common.model.constant.BooleanYn;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
 
-@Getter
-public class AssetsResponse {
+public record AssetsResponse(
 
-    @Schema(description = "자산 ID")
-    private Long id;
+        @Schema(description = "자산 ID")
+        Long id,
 
-    @Schema(description = "자산명")
-    private String name;
+        @Schema(description = "자산명")
+        String name,
 
-    @Schema(description = "색상")
-    private String color;
+        @Schema(description = "색상")
+        String color,
 
-    @Schema(description = "잔고")
-    private Integer balance;
+        @Schema(description = "잔고")
+        Integer balance,
 
-    @Schema(description = "순서")
-    private Integer order;
+        @Schema(description = "순서")
+        Integer order,
 
-    @Schema(description = "자산 총합 여부")
-    private BooleanYn totalActive;
+        @Schema(description = "자산 총합 여부")
+        BooleanYn totalActive
+) {
 
-    public AssetsResponse(Assets assets) {
-        this.id = assets.getId();
-        this.name = assets.getName();
-        this.color = assets.getColor();
-        this.balance = assets.getBalance();
-        this.order = assets.getOrders();
-        this.totalActive = assets.getTotalActive();
+    public AssetsResponse(Assets assets){
+        this(assets.getId(), assets.getName(), assets.getColor(), assets.getBalance(), assets.getOrders(), assets.getTotalActive());
     }
 }

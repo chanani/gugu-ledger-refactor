@@ -1,9 +1,10 @@
 package com.bank.gugu.assets.service;
 
+import com.bank.gugu.assets.mapper.AssetsMapper;
 import com.bank.gugu.assets.repository.AssetsRepository;
 import com.bank.gugu.assets.service.request.AssetsCreateRequest;
 import com.bank.gugu.assets.service.request.AssetsUpdateRequest;
-import com.bank.gugu.assets.service.response.AssetsPageResponse;
+import com.bank.gugu.assets.service.response.AssetsSummaryResponse;
 import com.bank.gugu.assets.service.response.AssetsResponse;
 import com.bank.gugu.assets.model.Assets;
 import com.bank.gugu.common.model.constant.BooleanYn;
@@ -29,50 +30,49 @@ public class DefaultAssetsService implements AssetsService {
     @Override
     @Transactional
     public void addAssets(AssetsCreateRequest request, User user) {
-        Assets newEntity = request.toEntity(user);
-        assetsRepository.save(newEntity);
+        Assets assets = AssetsMapper.fromCreateRequest(request, user);
+        assetsRepository.save(assets);
     }
 
     @Override
     @Transactional
     public void updateAssets(AssetsUpdateRequest request, Long assetsId) {
-        // 자산 그룹 조회
-        Assets findAssets = assetsRepository.findByIdAndStatus(assetsId, StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
-        // dto -> entity
-        Assets newEntity = request.toEntity();
-        // 수정
-        findAssets.update(newEntity);
+        Assets findAssets = findAssetsOrThrow(assetsId);
+        Assets assets = AssetsMapper.fromUpdateRequest(request);
+        findAssets.update(assets);
     }
 
     @Override
     @Transactional
     public void deleteAssets(Long assetsId) {
-        // 자산 그룹 조회
-        Assets findAssets = assetsRepository.findByIdAndStatus(assetsId, StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
-        // 소프트 삭제
-        findAssets.remove();
+        Assets assets = findAssetsOrThrow(assetsId);
+        assets.remove();
     }
 
     @Override
-    public AssetsPageResponse getAssetsList(User user) {
-        // 자산 목록 조회
-        List<AssetsResponse> findAssets = assetsRepository.findAllByUserIdAndStatusOrderByOrdersAsc(user.getId(), StatusType.ACTIVE).stream()
+    public AssetsSummaryResponse getAssetsList(User user) {
+        List<AssetsResponse> assetsDto = assetsRepository.findAllByUserIdAndStatusOrderByOrdersAsc(user.getId(), StatusType.ACTIVE).stream()
                 .map(AssetsResponse::new)
                 .toList();
-        // 총 자산 계산
-        int totalAssets = findAssets.stream()
-                .filter(dto -> dto.getTotalActive().equals(BooleanYn.Y))
-                .mapToInt(AssetsResponse::getBalance).sum();
 
-        return new AssetsPageResponse(totalAssets, findAssets);
+        int totalAssets = calculateTotalAssets(assetsDto);
+        return new AssetsSummaryResponse(totalAssets, assetsDto);
+    }
+
+    private static int calculateTotalAssets(List<AssetsResponse> findAssets) {
+        return findAssets.stream()
+                .filter(dto -> dto.totalActive().equals(BooleanYn.Y))
+                .mapToInt(AssetsResponse::balance).sum();
     }
 
     @Override
     public AssetsResponse getAssets(Long assetsId) {
-        Assets findAssets = assetsRepository.findByIdAndStatus(assetsId, StatusType.ACTIVE)
+        Assets assets = findAssetsOrThrow(assetsId);
+        return new AssetsResponse(assets);
+    }
+
+    private Assets findAssetsOrThrow(Long assetsId) {
+        return assetsRepository.findByIdAndStatus(assetsId, StatusType.ACTIVE)
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
-        return new AssetsResponse(findAssets);
     }
 }
