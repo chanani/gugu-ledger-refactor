@@ -55,7 +55,7 @@ public class RecordResponse {
         this.memo = record.getMemo();
         this.useDate = record.getUseDate();
         this.recordImages = images;
-        this.assetsId = record.getAssets() == null ? null : record.getAssets().getId();
-        this.categoryId = record.getCategory() == null ? null : record.getCategory().getId();
+        this.assetsId = record.getAssets() == null ? null : record.getAssetsId();
+        this.categoryId = record.getCategory() == null ? null : record.getCategoryId();
     }
 }

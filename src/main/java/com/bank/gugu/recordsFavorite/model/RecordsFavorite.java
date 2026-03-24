@@ -84,4 +84,8 @@ public class RecordsFavorite extends BaseEntity {
         }
         this.assets = newEntity.assets;
     }
+
+    public Long getAssetsId() {
+        return this.assets.getId();
+    }
 }

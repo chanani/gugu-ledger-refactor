@@ -1,18 +1,10 @@
 package com.bank.gugu.assetsDetail.service.request;
 
-import com.bank.gugu.assets.model.Assets;
-import com.bank.gugu.assetsDetail.model.AssetsDetail;
-import com.bank.gugu.category.model.Category;
-import com.bank.gugu.common.model.constant.BooleanYn;
 import com.bank.gugu.common.model.constant.PriceType;
 import com.bank.gugu.common.model.constant.RecordType;
-import com.bank.gugu.record.model.Records;
-import com.bank.gugu.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
-import java.time.LocalDate;
 
 public record AssetsDetailCreateRequest(
         @Schema(description = "자산 그룹 ID", example = "5")
@@ -47,33 +39,8 @@ public record AssetsDetailCreateRequest(
         String memo
 ) {
 
-    public AssetsDetail toEntity(User user, Assets assets, Category category) {
-        return AssetsDetail.builder()
-                .user(user)
-                .assets(assets)
-                .category(category)
-                .type(this.type)
-                .priceType(this.priceType)
-                .price(this.type.equals(RecordType.DEPOSIT) ? this.price : -this.price)
-                .balance(this.type.equals(RecordType.DEPOSIT) ?
-                        assets.getBalance() + price :
-                        assets.getBalance() - price)
-                .useDate(LocalDate.parse(this.useDate))
-                .active(this.active ? BooleanYn.Y : BooleanYn.N)
-                .memo(this.memo)
-                .build();
+    public boolean isType(RecordType type) {
+        return this.type.equals(type);
     }
 
-    public Records toRecordEntity(User user, Assets  assets, Category category) {
-        return Records.builder()
-                .user(user)
-                .category(category)
-                .assets(assets)
-                .type(this.type)
-                .price(price)
-                .priceType(this.priceType)
-                .memo(this.memo)
-                .useDate(LocalDate.parse(this.useDate))
-                .build();
-    }
 }

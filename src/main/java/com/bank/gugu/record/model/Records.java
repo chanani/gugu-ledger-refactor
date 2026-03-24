@@ -89,5 +89,13 @@ public class Records extends BaseEntity {
         }
     }
 
+    public Long getAssetsId() {
+        return this.assets.getId();
+    }
+
+    public Long getCategoryId() {
+        return this.category.getId();
+    }
+
 
 }

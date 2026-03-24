@@ -51,16 +51,16 @@ public class DefaultAssetsService implements AssetsService {
 
     @Override
     public AssetsSummaryResponse getAssetsList(User user) {
-        List<AssetsResponse> assetsDto = assetsRepository.findAllByUserIdAndStatusOrderByOrdersAsc(user.getId(), StatusType.ACTIVE).stream()
+        List<AssetsResponse> assetsResponse = assetsRepository.findAllByUserIdAndStatusOrderByOrdersAsc(user.getId(), StatusType.ACTIVE).stream()
                 .map(AssetsResponse::new)
                 .toList();
 
-        int totalAssets = calculateTotalAssets(assetsDto);
-        return new AssetsSummaryResponse(totalAssets, assetsDto);
+        int totalAssets = calculateTotalAssets(assetsResponse);
+        return new AssetsSummaryResponse(totalAssets, assetsResponse);
     }
 
-    private static int calculateTotalAssets(List<AssetsResponse> findAssets) {
-        return findAssets.stream()
+    private static int calculateTotalAssets(List<AssetsResponse> assetsResponse) {
+        return assetsResponse.stream()
                 .filter(dto -> dto.totalActive().equals(BooleanYn.Y))
                 .mapToInt(AssetsResponse::balance).sum();
     }
