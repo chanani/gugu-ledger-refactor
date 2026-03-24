@@ -2,7 +2,7 @@ package com.bank.gugu.assets;
 
 import com.bank.gugu.assets.service.request.AssetsCreateRequest;
 import com.bank.gugu.assets.service.request.AssetsUpdateRequest;
-import com.bank.gugu.assets.service.response.AssetsPageResponse;
+import com.bank.gugu.assets.service.response.AssetsSummaryResponse;
 import com.bank.gugu.assets.service.response.AssetsResponse;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
@@ -84,12 +84,12 @@ public interface AssetsControllerDocs {
                             mediaType = "application/json",
                             schema = @Schema(
                                     implementation = DataResponse.class,
-                                    subTypes = {AssetsPageResponse.class}
+                                    subTypes = {AssetsSummaryResponse.class}
                             )
                     )
             )}
     )
-    ResponseEntity<DataResponse<AssetsPageResponse>> getAssets(@Parameter(hidden = true) User user);
+    ResponseEntity<DataResponse<AssetsSummaryResponse>> getAssets(@Parameter(hidden = true) User user);
 
     @Operation(
             summary = "자산 정보 상세 조회",

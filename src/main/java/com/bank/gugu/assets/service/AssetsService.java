@@ -2,7 +2,7 @@ package com.bank.gugu.assets.service;
 
 import com.bank.gugu.assets.service.request.AssetsCreateRequest;
 import com.bank.gugu.assets.service.request.AssetsUpdateRequest;
-import com.bank.gugu.assets.service.response.AssetsPageResponse;
+import com.bank.gugu.assets.service.response.AssetsSummaryResponse;
 import com.bank.gugu.assets.service.response.AssetsResponse;
 import com.bank.gugu.user.model.User;
 
@@ -33,7 +33,7 @@ public interface AssetsService {
      * @param user 로그인 회원 객체
      * @return 자산 리스트 및 총 자산
      */
-    AssetsPageResponse getAssetsList(User user);
+    AssetsSummaryResponse getAssetsList(User user);
 
     /**
      * 자산 정보 상세 조회

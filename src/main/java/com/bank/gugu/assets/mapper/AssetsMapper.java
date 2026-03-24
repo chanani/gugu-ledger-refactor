@@ -8,8 +8,7 @@ import com.bank.gugu.user.model.User;
 
 public class AssetsMapper {
 
-    private AssetsMapper() {
-    }
+    private AssetsMapper() {}
 
     public static Assets fromCreateRequest(AssetsCreateRequest request, User user) {
         return Assets.builder()

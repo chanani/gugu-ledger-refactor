@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class AssetsPageResponse {
+public class AssetsSummaryResponse {
 
     @Schema(description = "총자산")
     private Integer totalAssets;
@@ -14,7 +14,7 @@ public class AssetsPageResponse {
     @Schema(description = "자산 그룹 목록")
     private List<AssetsResponse> assets;
 
-    public AssetsPageResponse(Integer totalAssets, List<AssetsResponse> assets) {
+    public AssetsSummaryResponse(Integer totalAssets, List<AssetsResponse> assets) {
         this.totalAssets = totalAssets;
         this.assets = assets;
     }
