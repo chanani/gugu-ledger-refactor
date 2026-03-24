@@ -1,7 +1,6 @@
 package com.bank.gugu.assetsDetail.service.response;
 
 import com.bank.gugu.assetsDetail.model.AssetsDetail;
-import com.bank.gugu.common.model.constant.BooleanYn;
 import com.bank.gugu.common.model.constant.PriceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 

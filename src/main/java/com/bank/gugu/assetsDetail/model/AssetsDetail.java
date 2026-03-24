@@ -133,4 +133,12 @@ public class AssetsDetail extends BaseEntity {
     public boolean isActiveY() {
         return this.active.equals(BooleanYn.Y);
     }
+
+    public Long getRecordId() {
+        return this.record.getId();
+    }
+
+    public Long getAssetsId() {
+        return this.assets.getId();
+    }
 }

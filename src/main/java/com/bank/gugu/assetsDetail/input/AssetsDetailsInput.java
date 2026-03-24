@@ -8,13 +8,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
-@ToString
+@NoArgsConstructor
 public class AssetsDetailsInput {
         @Schema(description = "계좌 아이디", example = "2")
         private Long assetsId;

@@ -66,7 +66,7 @@ public class DefaultAssetsDetailService implements AssetsDetailService {
     @Transactional
     public void updateAssetsDetail(Long assetsDetailId, AssetsDetailUpdateRequest request, User user) {
         AssetsDetail findAssetsDetail = findAssetsDetailOrThrow(assetsDetailId);
-        Assets findAssets = findAssetOrThrow(findAssetsDetail.getAssets().getId());
+        Assets findAssets = findAssetOrThrow(findAssetsDetail.getAssetsId());
         Category findCategory = findCategoryOrThrow(request.categoryId());
         AssetsDetail newEntity = AssetsDetailMapper.fromUpdateRequest(request, findAssetsDetail, findAssets, findCategory);
 
@@ -137,7 +137,7 @@ public class DefaultAssetsDetailService implements AssetsDetailService {
     }
 
     private Records findRecordOrThrow(AssetsDetail findAssetsDetail) {
-        return recordsRepository.findById(findAssetsDetail.getRecord().getId())
+        return recordsRepository.findById(findAssetsDetail.getRecordId())
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_RECORDS));
     }
 

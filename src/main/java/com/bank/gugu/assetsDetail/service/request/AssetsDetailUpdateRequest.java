@@ -1,15 +1,8 @@
 package com.bank.gugu.assetsDetail.service.request;
 
-import com.bank.gugu.assets.model.Assets;
-import com.bank.gugu.assetsDetail.model.AssetsDetail;
-import com.bank.gugu.category.model.Category;
-import com.bank.gugu.common.model.constant.BooleanYn;
 import com.bank.gugu.common.model.constant.PriceType;
 import com.bank.gugu.common.model.constant.RecordType;
-import com.bank.gugu.record.model.Records;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.time.LocalDate;
 
 public record AssetsDetailUpdateRequest(
 

@@ -44,7 +44,7 @@ public class RecordsFavoriteResponse {
         this.priceType = recordsFavorite.getPriceType();
         this.monthly = recordsFavorite.getMonthly();
         this.memo = recordsFavorite.getMemo();
-        this.assetsId = recordsFavorite.getAssets() == null ? null : recordsFavorite.getAssets().getId();
+        this.assetsId = recordsFavorite.getAssets() == null ? null : recordsFavorite.getAssetsId();
         this.categoryId = recordsFavorite.getCategory() == null ? null : recordsFavorite.getCategory().getId();
     }
 }

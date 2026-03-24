@@ -28,28 +28,33 @@ public class AssetsDetailMapper {
                 .price(request.isType(RecordType.DEPOSIT) ? request.price() : -request.price())
                 .balance(request.isType(RecordType.DEPOSIT) ?
                         assets.getBalance() + request.price() :
-                        assets.getBalance() - request.price())
+                        assets.getBalance() - request.price()
+                )
                 .useDate(LocalDate.parse(request.useDate()))
                 .active(request.active() ? BooleanYn.Y : BooleanYn.N)
                 .memo(request.memo())
                 .build();
     }
-    
+
     public static AssetsDetail fromUpdateRequest(
             AssetsDetailUpdateRequest request,
             AssetsDetail assetsDetail,
             Assets assets,
             Category category
-    ){
+    ) {
         return AssetsDetail.builder()
                 .category(category)
                 .assets(assets)
                 .type(request.type())
                 .priceType(request.priceType())
                 .price(request.isType(RecordType.DEPOSIT) ? request.price() : -request.price())
-                .balance(assetsDetail.getBalance() - assetsDetail.getPrice() +
-                        (request.isType(RecordType.DEPOSIT) ?
-                                request.price() : -request.price()))
+                .balance(
+                        assetsDetail.getBalance() - assetsDetail.getPrice() +
+                                (request.isType(RecordType.DEPOSIT) ?
+                                        request.price() :
+                                        -request.price()
+                                )
+                )
                 .useDate(LocalDate.parse(request.useDate()))
                 .active(request.active() ? BooleanYn.Y : BooleanYn.N)
                 .memo(request.memo())
