@@ -28,10 +28,7 @@ public class AssetsDetailMapper {
                 .type(request.type())
                 .priceType(request.priceType())
                 .price(request.isType(RecordType.DEPOSIT) ? request.price() : -request.price())
-                .balance(request.isType(RecordType.DEPOSIT) ?
-                        assets.getBalance() + request.price() :
-                        assets.getBalance() - request.price()
-                )
+                .balance(assets.calculateBalance(request.type(), request.price()))
                 .useDate(LocalDate.parse(request.useDate()))
                 .active(request.active() ? BooleanYn.Y : BooleanYn.N)
                 .memo(request.memo())
@@ -50,13 +47,7 @@ public class AssetsDetailMapper {
                 .type(request.type())
                 .priceType(request.priceType())
                 .price(request.isType(RecordType.DEPOSIT) ? request.price() : -request.price())
-                .balance(
-                        assetsDetail.getBalance() - assetsDetail.getPrice() +
-                                (request.isType(RecordType.DEPOSIT) ?
-                                        request.price() :
-                                        -request.price()
-                                )
-                )
+                .balance(assets.recalculateBalance(assetsDetail.getPrice(), request.type().applySign(request.price())))
                 .useDate(LocalDate.parse(request.useDate()))
                 .active(request.active() ? BooleanYn.Y : BooleanYn.N)
                 .memo(request.memo())
