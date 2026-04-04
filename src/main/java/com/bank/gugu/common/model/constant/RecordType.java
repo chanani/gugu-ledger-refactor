@@ -2,8 +2,6 @@ package com.bank.gugu.common.model.constant;
 
 import lombok.Getter;
 
-import java.math.BigDecimal;
-
 /**
  * 입/출금 타입
  */
