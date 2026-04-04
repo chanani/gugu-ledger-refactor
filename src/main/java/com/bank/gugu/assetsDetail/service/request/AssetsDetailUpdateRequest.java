@@ -1,15 +1,8 @@
 package com.bank.gugu.assetsDetail.service.request;
 
-import com.bank.gugu.assets.model.Assets;
-import com.bank.gugu.assetsDetail.model.AssetsDetail;
-import com.bank.gugu.category.model.Category;
-import com.bank.gugu.common.model.constant.BooleanYn;
 import com.bank.gugu.common.model.constant.PriceType;
 import com.bank.gugu.common.model.constant.RecordType;
-import com.bank.gugu.record.model.Records;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.time.LocalDate;
 
 public record AssetsDetailUpdateRequest(
 
@@ -35,30 +28,7 @@ public record AssetsDetailUpdateRequest(
         PriceType priceType
 ) {
 
-    public AssetsDetail toEntity(Assets assets, AssetsDetail currentAssetsDetail, Category category) {
-        return AssetsDetail.builder()
-                .category(category)
-                .assets(assets)
-                .type(this.type)
-                .priceType(this.priceType)
-                .price(this.type.equals(RecordType.DEPOSIT) ? this.price : -this.price)
-                .balance(currentAssetsDetail.getBalance() - currentAssetsDetail.getPrice() +
-                        (this.type.equals(RecordType.DEPOSIT) ?
-                                this.price : -this.price))
-                .useDate(LocalDate.parse(this.useDate))
-                .active(this.active ? BooleanYn.Y : BooleanYn.N)
-                .memo(this.memo)
-                .build();
-    }
-
-    public Records toRecordsEntity(Category category) {
-        return Records.builder()
-                .type(this.type)
-                .price(this.type.equals(RecordType.DEPOSIT) ? this.price : -this.price)
-                .priceType(this.priceType)
-                .category(category)
-                .useDate(LocalDate.parse(this.useDate))
-                .memo(this.memo)
-                .build();
+    public boolean isType(RecordType type) {
+        return this.type.equals(type);
     }
 }

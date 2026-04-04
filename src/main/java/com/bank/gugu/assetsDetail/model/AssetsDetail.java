@@ -129,4 +129,23 @@ public class AssetsDetail extends BaseEntity {
     public void updateRecordId(Records records) {
         this.record = records;
     }
+
+    public boolean isActiveY() {
+        return this.active.equals(BooleanYn.Y);
+    }
+
+
+    public Long getRecordId() {
+        return this.record.getId();
+    }
+
+    public Long getAssetsId() {
+        return this.assets.getId();
+    }
+
+    public Long getCategoryId() {
+        return this.category.getId();
+    }
+
+
 }

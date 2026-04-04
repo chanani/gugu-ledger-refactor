@@ -2,6 +2,8 @@ package com.bank.gugu.common.model.constant;
 
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 /**
  * 입/출금 타입
  */
@@ -15,5 +17,9 @@ public enum RecordType {
 
     RecordType(String value) {
         this.value = value;
+    }
+
+    public Integer applySign(Integer price) {
+        return this == DEPOSIT ? price : -price;
     }
 }

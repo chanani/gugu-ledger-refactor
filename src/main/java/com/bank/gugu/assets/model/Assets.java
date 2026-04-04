@@ -11,6 +11,8 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.math.BigDecimal;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -86,5 +88,20 @@ public class Assets extends BaseEntity {
         this.balance = this.balance - findRecord.getPrice() + newEntity.getPrice();
     }
 
+    /**
+     * Balance 계산
+     */
+    public Integer calculateBalance(RecordType type, Integer price) {
+        return type.equals(RecordType.DEPOSIT)
+                ? this.balance + price
+                : this.balance - price;
+    }
+
+    /**
+     * update 시 기존 거래 되돌리기
+     */
+    public Integer recalculateBalance(Integer oldSignedPrice, Integer newSignedPrice) {
+        return this.balance - oldSignedPrice + newSignedPrice;
+    }
 
 }

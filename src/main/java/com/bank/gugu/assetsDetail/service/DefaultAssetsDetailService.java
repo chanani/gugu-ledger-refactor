@@ -2,6 +2,7 @@ package com.bank.gugu.assetsDetail.service;
 
 import com.bank.gugu.assets.repository.AssetsRepository;
 import com.bank.gugu.assetsDetail.input.AssetsDetailsInput;
+import com.bank.gugu.assetsDetail.mapper.AssetsDetailMapper;
 import com.bank.gugu.assetsDetail.repository.AssetsDetailRepository;
 import com.bank.gugu.assetsDetail.repository.condition.AssetsCondition;
 import com.bank.gugu.assetsDetail.service.request.AssetsDetailCreateRequest;
@@ -10,11 +11,11 @@ import com.bank.gugu.assetsDetail.service.response.AssetsDetailResponse;
 import com.bank.gugu.assetsDetail.service.response.AssetsDetailsResponse;
 import com.bank.gugu.assetsDetail.service.response.AssetsDetailsTotalResponse;
 import com.bank.gugu.category.repository.CategoryRepository;
+import com.bank.gugu.record.mapper.RecordsMapper;
 import com.bank.gugu.record.repository.RecordsRepository;
 import com.bank.gugu.assets.model.Assets;
 import com.bank.gugu.assetsDetail.model.AssetsDetail;
 import com.bank.gugu.category.model.Category;
-import com.bank.gugu.common.model.constant.BooleanYn;
 import com.bank.gugu.common.model.constant.StatusType;
 import com.bank.gugu.record.model.Records;
 import com.bank.gugu.user.model.User;
@@ -45,98 +46,68 @@ public class DefaultAssetsDetailService implements AssetsDetailService {
     @Override
     @Transactional
     public void addAssetsDetail(AssetsDetailCreateRequest request, User user) {
-        // 자산 그룹 조회
-        Assets findAssets = assetsRepository.findByIdAndStatus(request.assetsId(), StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
-        // 카테고리 조회
-        Category findCategory = categoryRepository.findByIdAndStatus(request.categoryId(), StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_CATEGORY));
-        // dto -> entity
-        AssetsDetail findAssetsDetail = request.toEntity(user, findAssets, findCategory);
-        // 등록
-        AssetsDetail saveAssetsDetail = assetsDetailRepository.save(findAssetsDetail);
-        // 자산 그룹 금액 변경
-        findAssets.updateBalance(saveAssetsDetail);
-        // 입/출금 내역 생성
-        Records newRecordEntity = request.toRecordEntity(user, findAssets, findCategory);
-        if (!request.active()) newRecordEntity.inactive(); // 활성화 안할 경우 비노출
+        Assets assets = findAssetOrThrow(request.assetsId());
+        Category category = findCategoryOrThrow(request.categoryId());
+        AssetsDetail assetsDetail = AssetsDetailMapper.fromCreateRequest(request, user, assets, category);
+        AssetsDetail saveAssetsDetail = assetsDetailRepository.save(assetsDetail);
+        assets.updateBalance(saveAssetsDetail);
 
-        Records saveRecord = recordsRepository.save(newRecordEntity);
+        Records records = RecordsMapper.fromAssetsDetailCreateRequest(request, user, assets, category);
+        if (!request.active()) {
+            records.inactive(); // 활성화 안할 경우 비노출
+        }
 
-        // assetsDetail에 RecordId 추가
+        Records saveRecord = recordsRepository.save(records);
         saveAssetsDetail.updateRecordId(saveRecord);
     }
+
 
     @Override
     @Transactional
     public void updateAssetsDetail(Long assetsDetailId, AssetsDetailUpdateRequest request, User user) {
-        // 상세 정보 조회
-        AssetsDetail findAssetsDetail = assetsDetailRepository.findByIdAndStatus(assetsDetailId, StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS_DETAIL));
-        // 자산 그룹 조회
-        Assets findAssets = assetsRepository.findByIdAndStatus(findAssetsDetail.getAssets().getId(), StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
-        // 카테고리 조회
-        Category findCategory = categoryRepository.findByIdAndStatus(request.categoryId(), StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_CATEGORY));
-        // dto -> entity
-        AssetsDetail newEntity = request.toEntity(findAssets, findAssetsDetail, findCategory);
-        // 입/출금 내역 조회
-        Records findRecord = recordsRepository.findById(findAssetsDetail.getRecord().getId())
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_RECORDS));
-        Records newRecordEntity = request.toRecordsEntity(findCategory);
-        // 자산 그룹 금액 변경
-        findAssets.updateRecordBalance(findRecord, newRecordEntity);
-        // 입/출금 내역 수정
-        findRecord.update(newRecordEntity);
-        // 입/출금 내역에서 숨김 및 보이기 활성화
-        findRecord.updateActive(request.active());
-        // 수정 진행
-        findAssetsDetail.update(newEntity);
+        AssetsDetail assetsDetail = findAssetsDetailOrThrow(assetsDetailId);
+        Assets assets = findAssetOrThrow(assetsDetail.getAssetsId());
+        Category category = findCategoryOrThrow(request.categoryId());
+        AssetsDetail toEntity = AssetsDetailMapper.fromUpdateRequest(request, assetsDetail, assets, category);
+
+        Records records = findRecordOrThrow(assetsDetail);
+        Records newRecordEntity = RecordsMapper.fromAssetsDetailUpdateRequest(request, category);
+        assets.updateRecordBalance(records, newRecordEntity);
+        records.update(newRecordEntity);
+        records.updateActive(request.active());
+        assetsDetail.update(toEntity);
     }
 
     @Override
     @Transactional
     public void deleteAssetsDetail(Long assetsDetailId) {
-        // 상세 정보 조회
-        AssetsDetail findAssetsDetail = assetsDetailRepository.findByIdAndStatus(assetsDetailId, StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS_DETAIL));
-        // 소프트 삭제
-        findAssetsDetail.remove();
-        // 기록에 표시되어 있는 상태일 경우 기록도 삭제
-        if (findAssetsDetail.getActive().equals(BooleanYn.Y)) {
-            // 입/출금 내역 조회 후 수정
-            Records findRecord = recordsRepository.findById(findAssetsDetail.getRecord().getId())
-                    .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_RECORDS));
-            findRecord.remove();
+        AssetsDetail assetsDetail = findAssetsDetailOrThrow(assetsDetailId);
+        assetsDetail.remove();
+
+        if (assetsDetail.isActiveY()) {
+            Records records = findRecordOrThrow(assetsDetail);
+            records.remove();
         }
     }
 
     @Override
     public AssetsDetailsTotalResponse getAssetsDetails(PageInput pageInput, AssetsDetailsInput input, User user) {
-        Assets findAssets = assetsRepository.findByIdAndStatus(input.assetsId(), StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
-        // input -> condition
+        Assets assets = findAssetOrThrow(input.getAssetsId());
         AssetsCondition condition = input.toCondition();
-        // 페이징 객체 생성
         Pageable pageable = Pageable.ofSize(pageInput.size() + 1).withPage(pageInput.page() - 1);
-        // 자산 상세내역 조회
         List<AssetsDetailsResponse> assetsDetails = assetsDetailRepository.findByQuery(pageable, condition, user).stream()
                 .map(AssetsDetailsResponse::new)
                 .toList();
-        // 반환할 페이지 객체 생성
+
         Pageable returnPageable = pageable.withPage(pageInput.page());
-        // Slice 객체 생성
         Slice<AssetsDetailsResponse> pointDetailSlice = new SliceImpl<>(assetsDetails, returnPageable, hasNextPage(assetsDetails, pageable.getPageSize()));
-        return new AssetsDetailsTotalResponse(findAssets, pointDetailSlice);
+        return AssetsDetailsTotalResponse.from(assets, pointDetailSlice);
     }
 
     @Override
     public AssetsDetailResponse getAssetsDetail(Long assetsDetailId) {
-        // 상세 정보 조회
-        AssetsDetail findAssetsDetail = assetsDetailRepository.findByIdAndStatus(assetsDetailId, StatusType.ACTIVE)
-                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS_DETAIL));
-        return new AssetsDetailResponse(findAssetsDetail);
+        AssetsDetail assetsDetail = findAssetsDetailOrThrow(assetsDetailId);
+        return AssetsDetailResponse.from(assetsDetail);
     }
 
     /**
@@ -149,4 +120,25 @@ public class DefaultAssetsDetailService implements AssetsDetailService {
         }
         return false;
     }
+
+    private Assets findAssetOrThrow(Long assetsId) {
+        return assetsRepository.findByIdAndStatus(assetsId, StatusType.ACTIVE)
+                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS));
+    }
+
+    private Category findCategoryOrThrow(Long categoryId) {
+        return categoryRepository.findByIdAndStatus(categoryId, StatusType.ACTIVE)
+                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_CATEGORY));
+    }
+
+    private AssetsDetail findAssetsDetailOrThrow(Long assetsDetailId) {
+        return assetsDetailRepository.findByIdAndStatus(assetsDetailId, StatusType.ACTIVE)
+                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS_DETAIL));
+    }
+
+    private Records findRecordOrThrow(AssetsDetail findAssetsDetail) {
+        return recordsRepository.findById(findAssetsDetail.getRecordId())
+                .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_RECORDS));
+    }
+
 }

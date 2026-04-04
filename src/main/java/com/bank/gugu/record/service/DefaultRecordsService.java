@@ -164,7 +164,7 @@ public class DefaultRecordsService implements RecordsService {
     @Transactional
     public void updateMemo(Long recordsId, RecordUpdateMemoRequest request) {
         Records newEntity = request.toEntity();
-        
+
         Records findRecord = findRecord(recordsId);
 
         findRecord.update(newEntity);
@@ -261,7 +261,7 @@ public class DefaultRecordsService implements RecordsService {
     }
 
     private void modifyAssets(Records findRecord, Records newEntity) {
-        assetsRepository.findByIdAndStatus(findRecord.getAssets().getId(), StatusType.ACTIVE)
+        assetsRepository.findByIdAndStatus(findRecord.getAssetsId(), StatusType.ACTIVE)
                 .ifPresent(assets -> assets.updateRecordBalance(findRecord, newEntity));
         assetsDetailRepository.findByRecordIdAndStatus(findRecord.getId(), StatusType.ACTIVE)
                 .ifPresent(assetsDetail -> assetsDetail.updateRecordPrice(newEntity));
@@ -287,7 +287,7 @@ public class DefaultRecordsService implements RecordsService {
 
     private void removeAssetsDetail(Records findRecord) {
         if (findRecord.getAssets() != null) {
-            assetsRepository.findByIdAndStatus(findRecord.getAssets().getId(), StatusType.ACTIVE)
+            assetsRepository.findByIdAndStatus(findRecord.getAssetsId(), StatusType.ACTIVE)
                     .ifPresent(findAssets -> findAssets.removeBalance(findRecord));
             assetsDetailRepository.findByRecordIdAndStatus(findRecord.getId(), StatusType.ACTIVE)
                     .ifPresent(BaseEntity::remove);

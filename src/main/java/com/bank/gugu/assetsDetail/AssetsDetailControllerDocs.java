@@ -5,6 +5,7 @@ import com.bank.gugu.assetsDetail.service.request.AssetsDetailCreateRequest;
 import com.bank.gugu.assetsDetail.service.request.AssetsDetailUpdateRequest;
 import com.bank.gugu.assetsDetail.service.response.AssetsDetailResponse;
 import com.bank.gugu.assetsDetail.service.response.AssetsDetailsTotalResponse;
+import com.bank.gugu.global.annotation.AuthUser;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
 import com.bank.gugu.user.model.User;
