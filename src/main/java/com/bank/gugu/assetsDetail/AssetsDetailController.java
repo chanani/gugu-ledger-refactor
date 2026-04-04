@@ -11,6 +11,7 @@ import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.page.PageInput;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
+import io.lettuce.core.dynamic.annotation.Param;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -57,7 +58,9 @@ public class AssetsDetailController implements AssetsDetailControllerDocs {
 
     @DeleteMapping("/api/v1/user/assets-detail/{assetsDetailId}")
     @Override
-    public ResponseEntity<ApiResponse> deleteAssetsDetail(@PathVariable(name = "assetsDetailId") Long assetsDetailId) {
+    public ResponseEntity<ApiResponse> deleteAssetsDetail(
+            @PathVariable(name = "assetsDetailId") Long assetsDetailId
+    ) {
         assetsDetailService.deleteAssetsDetail(assetsDetailId);
         return ResponseEntity.ok(ApiResponse.ok());
     }

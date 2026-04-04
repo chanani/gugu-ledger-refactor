@@ -88,4 +88,8 @@ public class RecordsFavorite extends BaseEntity {
     public Long getAssetsId() {
         return this.assets.getId();
     }
+
+    public Long getCategoryId() {
+        return this.category.getId();
+    }
 }

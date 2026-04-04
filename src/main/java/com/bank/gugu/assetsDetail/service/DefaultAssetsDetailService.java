@@ -46,13 +46,13 @@ public class DefaultAssetsDetailService implements AssetsDetailService {
     @Override
     @Transactional
     public void addAssetsDetail(AssetsDetailCreateRequest request, User user) {
-        Assets findAssets = findAssetOrThrow(request.assetsId());
-        Category findCategory = findCategoryOrThrow(request.categoryId());
-        AssetsDetail assetsDetail = AssetsDetailMapper.fromCreateRequest(request, user, findAssets, findCategory);
+        Assets assets = findAssetOrThrow(request.assetsId());
+        Category category = findCategoryOrThrow(request.categoryId());
+        AssetsDetail assetsDetail = AssetsDetailMapper.fromCreateRequest(request, user, assets, category);
         AssetsDetail saveAssetsDetail = assetsDetailRepository.save(assetsDetail);
-        findAssets.updateBalance(saveAssetsDetail);
+        assets.updateBalance(saveAssetsDetail);
 
-        Records records = RecordsMapper.fromAssetsDetailCreateRequest(request, user, findAssets, findCategory);
+        Records records = RecordsMapper.fromAssetsDetailCreateRequest(request, user, assets, category);
         if (!request.active()) {
             records.inactive(); // 활성화 안할 경우 비노출
         }
@@ -65,28 +65,28 @@ public class DefaultAssetsDetailService implements AssetsDetailService {
     @Override
     @Transactional
     public void updateAssetsDetail(Long assetsDetailId, AssetsDetailUpdateRequest request, User user) {
-        AssetsDetail findAssetsDetail = findAssetsDetailOrThrow(assetsDetailId);
-        Assets findAssets = findAssetOrThrow(findAssetsDetail.getAssetsId());
-        Category findCategory = findCategoryOrThrow(request.categoryId());
-        AssetsDetail newEntity = AssetsDetailMapper.fromUpdateRequest(request, findAssetsDetail, findAssets, findCategory);
+        AssetsDetail assertDetail = findAssetsDetailOrThrow(assetsDetailId);
+        Assets assets = findAssetOrThrow(assertDetail.getAssetsId());
+        Category category = findCategoryOrThrow(request.categoryId());
+        AssetsDetail toEntity = AssetsDetailMapper.fromUpdateRequest(request, assertDetail, assets, category);
 
-        Records findRecord = findRecordOrThrow(findAssetsDetail);
-        Records newRecordEntity = RecordsMapper.fromAssetsDetailUpdateRequest(request, findCategory);
-        findAssets.updateRecordBalance(findRecord, newRecordEntity);
-        findRecord.update(newRecordEntity);
-        findRecord.updateActive(request.active());
-        findAssetsDetail.update(newEntity);
+        Records records = findRecordOrThrow(assertDetail);
+        Records newRecordEntity = RecordsMapper.fromAssetsDetailUpdateRequest(request, category);
+        assets.updateRecordBalance(records, newRecordEntity);
+        records.update(newRecordEntity);
+        records.updateActive(request.active());
+        assertDetail.update(toEntity);
     }
 
     @Override
     @Transactional
     public void deleteAssetsDetail(Long assetsDetailId) {
-        AssetsDetail findAssetsDetail = findAssetsDetailOrThrow(assetsDetailId);
-        findAssetsDetail.remove();
+        AssetsDetail assetsDetail = findAssetsDetailOrThrow(assetsDetailId);
+        assetsDetail.remove();
 
-        if (findAssetsDetail.isActiveY()) {
-            Records findRecord = findRecordOrThrow(findAssetsDetail);
-            findRecord.remove();
+        if (assetsDetail.isActiveY()) {
+            Records records = findRecordOrThrow(assetsDetail);
+            records.remove();
         }
     }
 
@@ -106,8 +106,8 @@ public class DefaultAssetsDetailService implements AssetsDetailService {
 
     @Override
     public AssetsDetailResponse getAssetsDetail(Long assetsDetailId) {
-        AssetsDetail findAssetsDetail = findAssetsDetailOrThrow(assetsDetailId);
-        return AssetsDetailResponse.from(findAssetsDetail);
+        AssetsDetail assetsDetail = findAssetsDetailOrThrow(assetsDetailId);
+        return AssetsDetailResponse.from(assetsDetail);
     }
 
     /**

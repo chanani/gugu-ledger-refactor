@@ -37,7 +37,7 @@ public record AssetsDetailResponse(
                 assetsDetail.getMemo(),
                 assetsDetail.isActiveY(),
                 assetsDetail.getPriceType(),
-                assetsDetail.getCategory().getId()
+                assetsDetail.getCategoryId()
         );
     }
 }

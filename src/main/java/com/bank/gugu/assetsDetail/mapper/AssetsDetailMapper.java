@@ -13,6 +13,8 @@ import java.time.LocalDate;
 
 public class AssetsDetailMapper {
 
+    private AssetsDetailMapper() {}
+
     public static AssetsDetail fromCreateRequest(
             AssetsDetailCreateRequest request,
             User user,
