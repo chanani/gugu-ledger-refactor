@@ -65,17 +65,17 @@ public class DefaultAssetsDetailService implements AssetsDetailService {
     @Override
     @Transactional
     public void updateAssetsDetail(Long assetsDetailId, AssetsDetailUpdateRequest request, User user) {
-        AssetsDetail assertDetail = findAssetsDetailOrThrow(assetsDetailId);
-        Assets assets = findAssetOrThrow(assertDetail.getAssetsId());
+        AssetsDetail assetsDetail = findAssetsDetailOrThrow(assetsDetailId);
+        Assets assets = findAssetOrThrow(assetsDetail.getAssetsId());
         Category category = findCategoryOrThrow(request.categoryId());
-        AssetsDetail toEntity = AssetsDetailMapper.fromUpdateRequest(request, assertDetail, assets, category);
+        AssetsDetail toEntity = AssetsDetailMapper.fromUpdateRequest(request, assetsDetail, assets, category);
 
-        Records records = findRecordOrThrow(assertDetail);
+        Records records = findRecordOrThrow(assetsDetail);
         Records newRecordEntity = RecordsMapper.fromAssetsDetailUpdateRequest(request, category);
         assets.updateRecordBalance(records, newRecordEntity);
         records.update(newRecordEntity);
         records.updateActive(request.active());
-        assertDetail.update(toEntity);
+        assetsDetail.update(toEntity);
     }
 
     @Override

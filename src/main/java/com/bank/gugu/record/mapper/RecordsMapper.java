@@ -12,6 +12,8 @@ import java.time.LocalDate;
 
 public class RecordsMapper {
 
+    private RecordsMapper() {}
+
     public static Records fromAssetsDetailCreateRequest(
             AssetsDetailCreateRequest request,
             User user,

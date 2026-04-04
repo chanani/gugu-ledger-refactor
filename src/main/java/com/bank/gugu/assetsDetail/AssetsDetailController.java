@@ -11,7 +11,6 @@ import com.bank.gugu.user.model.User;
 import com.bank.gugu.global.page.PageInput;
 import com.bank.gugu.global.response.ApiResponse;
 import com.bank.gugu.global.response.DataResponse;
-import io.lettuce.core.dynamic.annotation.Param;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

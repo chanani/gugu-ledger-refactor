@@ -145,4 +145,6 @@ public class AssetsDetail extends BaseEntity {
     public Long getCategoryId() {
         return this.category.getId();
     }
+
+
 }
