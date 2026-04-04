@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public class DefaultRecordsImageService implements RecordsImageService {
 
     public static final String FILE_PATH = "/bank/fileImage";
+    public static final String MONTH_DAY_SUFFIX = "-01";
 
     private final RecordsImageRepository recordsImageRepository;
     private final RecordsRepository recordsRepository;
@@ -54,17 +55,14 @@ public class DefaultRecordsImageService implements RecordsImageService {
                 .path(fileName.getModifiedFileName())
                 .user(user)
                 .build();
+        
         recordsImageRepository.save(newEntity);
     }
 
     @Override
     public List<RecordsImagesResponse> getRecordsImages(String date, User user) {
-        // 해당 월의 첫 번째 날과 마지막 날 계산
-        LocalDate startDate = LocalDate.parse(date.concat("-01"));
-        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-
-        // to condition
-        RecordImagesMonthCondition condition = new RecordImagesMonthCondition(new Range(startDate, endDate), user);
+        Range range = calculateMonthDay(date);
+        RecordImagesMonthCondition condition = new RecordImagesMonthCondition(range, user);
 
         // 월별 이미지 목록 조회
         Map<LocalDate, List<RecordsImagesMonthResponse>> groupedByDate = recordsImageRepository.findMonthQuery(condition).stream()
@@ -87,5 +85,11 @@ public class DefaultRecordsImageService implements RecordsImageService {
     private Records findRecordsOrThrow(Long recordsId) {
         return recordsRepository.findByIdAndStatus(recordsId, StatusType.ACTIVE)
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_RECORDS));
+    }
+
+    private Range calculateMonthDay(String date) {
+        LocalDate startDate = LocalDate.parse(date.concat(MONTH_DAY_SUFFIX));
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        return new Range(startDate, endDate);
     }
 }
