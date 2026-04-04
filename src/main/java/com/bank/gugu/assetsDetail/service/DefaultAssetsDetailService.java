@@ -68,14 +68,14 @@ public class DefaultAssetsDetailService implements AssetsDetailService {
         AssetsDetail assetsDetail = findAssetsDetailOrThrow(assetsDetailId);
         Assets assets = findAssetOrThrow(assetsDetail.getAssetsId());
         Category category = findCategoryOrThrow(request.categoryId());
-        AssetsDetail toEntity = AssetsDetailMapper.fromUpdateRequest(request, assetsDetail, assets, category);
+        AssetsDetail updatedAssetsDetail = AssetsDetailMapper.fromUpdateRequest(request, assetsDetail, assets, category);
 
         Records records = findRecordOrThrow(assetsDetail);
         Records newRecordEntity = RecordsMapper.fromAssetsDetailUpdateRequest(request, category);
         assets.updateRecordBalance(records, newRecordEntity);
         records.update(newRecordEntity);
         records.updateActive(request.active());
-        assetsDetail.update(toEntity);
+        assetsDetail.update(updatedAssetsDetail);
     }
 
     @Override
@@ -136,8 +136,8 @@ public class DefaultAssetsDetailService implements AssetsDetailService {
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_ASSETS_DETAIL));
     }
 
-    private Records findRecordOrThrow(AssetsDetail findAssetsDetail) {
-        return recordsRepository.findById(findAssetsDetail.getRecordId())
+    private Records findRecordOrThrow(AssetsDetail assetsDetail) {
+        return recordsRepository.findById(assetsDetail.getRecordId())
                 .orElseThrow(() -> new OperationErrorException(ErrorCode.NOT_FOUND_RECORDS));
     }
 
